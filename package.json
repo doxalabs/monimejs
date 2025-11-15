@@ -1,0 +1,48 @@
+{
+  "name": "monimejs",
+  "version": "0.0.0-alpha.1",
+  "description": "Unofficial lightweight and easy js/ts SDK for interacting with monime's endpoints.",
+  "main": "src/index.js",
+  "type": "module",
+  "engineStrict": true,
+  "scripts": {
+    "format": "biome check --write .",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artisansco/monimejs.git"
+  },
+  "keywords": [
+    "mobile money",
+    "monime",
+    "orange money",
+    "afri money",
+    "q money"
+  ],
+  "author": "The Artisans",
+  "license": "Apache-2.0",
+  "contributors": [
+    {
+      "name": "Sparrow",
+      "email": "bnjox@users.noreply.github.com",
+      "url": "https://github.com/bnjox"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Sparrow",
+      "email": "bnjox@users.noreply.github.com",
+      "url": "https://github.com/bnjox"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/artisansco/monimejs/issues"
+  },
+  "homepage": "https://github.com/artisansco/monimejs#readme",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.5",
+    "typescript": "^5.9.3"
+  }
+}
