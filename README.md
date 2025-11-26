@@ -83,6 +83,39 @@ For POST endpoints, the SDK automatically adds an `Idempotency-Key` header. This
 
 For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
+### Development Workflow
+
+This project uses **Changesets** for version management and automated publishing:
+
+1. **Make changes** to the codebase
+2. **Add a changeset**: `npm run changeset`
+   - Select version bump type (patch/minor/major)
+   - Describe your changes
+3. **Commit** the changeset file with your code
+4. **PR to main** triggers automated version bump and publishing
+
+### Release Process
+
+- **CI/CD**: GitHub Actions automatically build and test
+- **Publishing**: Changesets create release PRs and publish to npm
+- **Changelog**: Automatically generated from changeset descriptions
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Build the library
+npm run build:clean
+
+# Add a changeset for your changes
+npm run changeset
+
+# Format code
+npm run format
+```
+
 ---
 
 ## License
