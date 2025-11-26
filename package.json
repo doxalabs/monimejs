@@ -43,6 +43,7 @@
   "homepage": "https://github.com/atisans/monimejs#readme",
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
+    "@types/node": "^24.10.1",
     "typescript": "^5.9.3"
   }
 }
