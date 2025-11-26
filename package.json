@@ -2,12 +2,26 @@
   "name": "monimejs",
   "version": "0.0.0-alpha.1",
   "description": "Unofficial lightweight and easy js/ts SDK for interacting with monime's endpoints.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "engineStrict": true,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "format": "biome check --write .",
     "build": "tsc",
+    "build:clean": "rm -rf dist && npm run build",
+    "prepublishOnly": "npm run build:clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
