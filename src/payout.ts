@@ -3,24 +3,24 @@ import type {
   ApiDeleteResponse,
   ApiListResponse,
   ApiResponse,
-  CreatePaymentCodeInput,
-  ListPaymentCodesParams,
-  PaymentCode,
+  CreatePayoutInput,
+  ListPayoutsParams,
+  Payout,
   RequestConfig,
-  UpdatePaymentCodeInput,
+  UpdatePayoutInput,
 } from "./types";
 import {
-  validateCreatePaymentCodeInput,
+  validateCreatePayoutInput,
   validateLimit,
-  validatePaymentCodeId,
-  validateUpdatePaymentCodeInput,
+  validatePayoutId,
+  validateUpdatePayoutInput,
 } from "./validation";
 
 /**
- * Module for managing payment codes.
- * Payment codes are used to generate USSD codes for receiving payments.
+ * Module for managing payouts.
+ * Payouts are used to transfer funds to external accounts (bank, mobile money, wallet).
  */
-export class PaymentCodeModule {
+export class PayoutModule {
   private _http_client: MonimeHttpClient;
 
   constructor(httpClient: MonimeHttpClient) {
@@ -28,26 +28,26 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Creates a new payment code.
-   * @param input - Payment code configuration
+   * Creates a new payout.
+   * @param input - Payout configuration including amount and destination
    * @param idempotencyKey - Optional key to prevent duplicate requests
    * @param config - Per-request configuration overrides
-   * @returns The created payment code
+   * @returns The created payout
    * @throws {MonimeValidationError} If input validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async create(
-    input: CreatePaymentCodeInput,
+    input: CreatePayoutInput,
     idempotencyKey?: string,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<Payout>> {
     if (this._http_client.shouldValidate) {
-      validateCreatePaymentCodeInput(input);
+      validateCreatePayoutInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Payout>>({
       method: "POST",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/payouts`,
       body: input,
       idempotencyKey,
       config,
@@ -55,92 +55,91 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Retrieves a payment code by ID.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Retrieves a payout by ID.
+   * @param id - The payout ID (must start with "pot-")
    * @param config - Per-request configuration overrides
-   * @returns The payment code
+   * @returns The payout
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(
-    id: string,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  async get(id: string, config?: RequestConfig): Promise<ApiResponse<Payout>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validatePayoutId(id);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Payout>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/payouts/${encodeURIComponent(id)}`,
       config,
     });
   }
 
   /**
-   * Lists payment codes with optional filtering.
+   * Lists payouts with optional filtering.
    * @param params - Optional filter and pagination parameters
    * @param config - Per-request configuration overrides
-   * @returns A paginated list of payment codes
+   * @returns A paginated list of payouts
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(
-    params?: ListPaymentCodesParams,
+    params?: ListPayoutsParams,
     config?: RequestConfig,
-  ): Promise<ApiListResponse<PaymentCode>> {
+  ): Promise<ApiListResponse<Payout>> {
     if (this._http_client.shouldValidate && params?.limit !== undefined) {
       validateLimit(params.limit);
     }
 
     const query_params = params
       ? {
-          ussd_code: params.ussd_code,
-          mode: params.mode,
           status: params.status,
+          sourceFinancialAccountId: params.sourceFinancialAccountId,
+          sourceTransactionReference: params.sourceTransactionReference,
+          destinationTransactionReference:
+            params.destinationTransactionReference,
           limit: params.limit,
           after: params.after,
         }
       : undefined;
 
-    return this._http_client.request<ApiListResponse<PaymentCode>>({
+    return this._http_client.request<ApiListResponse<Payout>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/payouts`,
       params: query_params,
       config,
     });
   }
 
   /**
-   * Updates a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Updates a payout.
+   * @param id - The payout ID (must start with "pot-")
    * @param input - Fields to update (null values will clear the field)
    * @param config - Per-request configuration overrides
-   * @returns The updated payment code
+   * @returns The updated payout
    * @throws {MonimeValidationError} If validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async update(
     id: string,
-    input: UpdatePaymentCodeInput,
+    input: UpdatePayoutInput,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<Payout>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
-      validateUpdatePaymentCodeInput(input);
+      validatePayoutId(id);
+      validateUpdatePayoutInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Payout>>({
       method: "PATCH",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/payouts/${encodeURIComponent(id)}`,
       body: input,
       config,
     });
   }
 
   /**
-   * Deletes a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Deletes a payout.
+   * @param id - The payout ID (must start with "pot-")
    * @param config - Per-request configuration overrides
    * @returns Confirmation of deletion
    * @throws {MonimeValidationError} If ID validation fails
@@ -148,12 +147,12 @@ export class PaymentCodeModule {
    */
   async delete(id: string, config?: RequestConfig): Promise<ApiDeleteResponse> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validatePayoutId(id);
     }
 
     return this._http_client.request<ApiDeleteResponse>({
       method: "DELETE",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/payouts/${encodeURIComponent(id)}`,
       config,
     });
   }

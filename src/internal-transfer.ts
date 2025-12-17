@@ -3,24 +3,24 @@ import type {
   ApiDeleteResponse,
   ApiListResponse,
   ApiResponse,
-  CreatePaymentCodeInput,
-  ListPaymentCodesParams,
-  PaymentCode,
+  CreateInternalTransferInput,
+  InternalTransfer,
+  ListInternalTransfersParams,
   RequestConfig,
-  UpdatePaymentCodeInput,
+  UpdateInternalTransferInput,
 } from "./types";
 import {
-  validateCreatePaymentCodeInput,
+  validateCreateInternalTransferInput,
+  validateInternalTransferId,
   validateLimit,
-  validatePaymentCodeId,
-  validateUpdatePaymentCodeInput,
+  validateUpdateInternalTransferInput,
 } from "./validation";
 
 /**
- * Module for managing payment codes.
- * Payment codes are used to generate USSD codes for receiving payments.
+ * Module for managing internal transfers.
+ * Internal transfers move funds between financial accounts within the same space.
  */
-export class PaymentCodeModule {
+export class InternalTransferModule {
   private _http_client: MonimeHttpClient;
 
   constructor(httpClient: MonimeHttpClient) {
@@ -28,26 +28,26 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Creates a new payment code.
-   * @param input - Payment code configuration
+   * Creates a new internal transfer.
+   * @param input - Transfer configuration including amount and accounts
    * @param idempotencyKey - Optional key to prevent duplicate requests
    * @param config - Per-request configuration overrides
-   * @returns The created payment code
+   * @returns The created internal transfer
    * @throws {MonimeValidationError} If input validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async create(
-    input: CreatePaymentCodeInput,
+    input: CreateInternalTransferInput,
     idempotencyKey?: string,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<InternalTransfer>> {
     if (this._http_client.shouldValidate) {
-      validateCreatePaymentCodeInput(input);
+      validateCreateInternalTransferInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<InternalTransfer>>({
       method: "POST",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/internal-transfers`,
       body: input,
       idempotencyKey,
       config,
@@ -55,92 +55,93 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Retrieves a payment code by ID.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Retrieves an internal transfer by ID.
+   * @param id - The internal transfer ID (must start with "trn-")
    * @param config - Per-request configuration overrides
-   * @returns The payment code
+   * @returns The internal transfer
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(
     id: string,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<InternalTransfer>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validateInternalTransferId(id);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<InternalTransfer>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/internal-transfers/${encodeURIComponent(id)}`,
       config,
     });
   }
 
   /**
-   * Lists payment codes with optional filtering.
+   * Lists internal transfers with optional filtering.
    * @param params - Optional filter and pagination parameters
    * @param config - Per-request configuration overrides
-   * @returns A paginated list of payment codes
+   * @returns A paginated list of internal transfers
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(
-    params?: ListPaymentCodesParams,
+    params?: ListInternalTransfersParams,
     config?: RequestConfig,
-  ): Promise<ApiListResponse<PaymentCode>> {
+  ): Promise<ApiListResponse<InternalTransfer>> {
     if (this._http_client.shouldValidate && params?.limit !== undefined) {
       validateLimit(params.limit);
     }
 
     const query_params = params
       ? {
-          ussd_code: params.ussd_code,
-          mode: params.mode,
           status: params.status,
+          sourceFinancialAccountId: params.sourceFinancialAccountId,
+          destinationFinancialAccountId: params.destinationFinancialAccountId,
+          financialTransactionReference: params.financialTransactionReference,
           limit: params.limit,
           after: params.after,
         }
       : undefined;
 
-    return this._http_client.request<ApiListResponse<PaymentCode>>({
+    return this._http_client.request<ApiListResponse<InternalTransfer>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/internal-transfers`,
       params: query_params,
       config,
     });
   }
 
   /**
-   * Updates a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Updates an internal transfer.
+   * @param id - The internal transfer ID (must start with "trn-")
    * @param input - Fields to update (null values will clear the field)
    * @param config - Per-request configuration overrides
-   * @returns The updated payment code
+   * @returns The updated internal transfer
    * @throws {MonimeValidationError} If validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async update(
     id: string,
-    input: UpdatePaymentCodeInput,
+    input: UpdateInternalTransferInput,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<InternalTransfer>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
-      validateUpdatePaymentCodeInput(input);
+      validateInternalTransferId(id);
+      validateUpdateInternalTransferInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<InternalTransfer>>({
       method: "PATCH",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/internal-transfers/${encodeURIComponent(id)}`,
       body: input,
       config,
     });
   }
 
   /**
-   * Deletes a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Deletes an internal transfer.
+   * @param id - The internal transfer ID (must start with "trn-")
    * @param config - Per-request configuration overrides
    * @returns Confirmation of deletion
    * @throws {MonimeValidationError} If ID validation fails
@@ -148,12 +149,12 @@ export class PaymentCodeModule {
    */
   async delete(id: string, config?: RequestConfig): Promise<ApiDeleteResponse> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validateInternalTransferId(id);
     }
 
     return this._http_client.request<ApiDeleteResponse>({
       method: "DELETE",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/internal-transfers/${encodeURIComponent(id)}`,
       config,
     });
   }

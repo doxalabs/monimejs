@@ -3,24 +3,24 @@ import type {
   ApiDeleteResponse,
   ApiListResponse,
   ApiResponse,
-  CreatePaymentCodeInput,
-  ListPaymentCodesParams,
-  PaymentCode,
+  CreateWebhookInput,
+  ListWebhooksParams,
   RequestConfig,
-  UpdatePaymentCodeInput,
+  UpdateWebhookInput,
+  Webhook,
 } from "./types";
 import {
-  validateCreatePaymentCodeInput,
+  validateCreateWebhookInput,
   validateLimit,
-  validatePaymentCodeId,
-  validateUpdatePaymentCodeInput,
+  validateUpdateWebhookInput,
+  validateWebhookId,
 } from "./validation";
 
 /**
- * Module for managing payment codes.
- * Payment codes are used to generate USSD codes for receiving payments.
+ * Module for managing webhooks.
+ * Webhooks allow you to receive real-time notifications about events in your account.
  */
-export class PaymentCodeModule {
+export class WebhookModule {
   private _http_client: MonimeHttpClient;
 
   constructor(httpClient: MonimeHttpClient) {
@@ -28,26 +28,26 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Creates a new payment code.
-   * @param input - Payment code configuration
+   * Creates a new webhook.
+   * @param input - Webhook configuration including URL and events
    * @param idempotencyKey - Optional key to prevent duplicate requests
    * @param config - Per-request configuration overrides
-   * @returns The created payment code
+   * @returns The created webhook
    * @throws {MonimeValidationError} If input validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async create(
-    input: CreatePaymentCodeInput,
+    input: CreateWebhookInput,
     idempotencyKey?: string,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<Webhook>> {
     if (this._http_client.shouldValidate) {
-      validateCreatePaymentCodeInput(input);
+      validateCreateWebhookInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Webhook>>({
       method: "POST",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/webhooks`,
       body: input,
       idempotencyKey,
       config,
@@ -55,92 +55,86 @@ export class PaymentCodeModule {
   }
 
   /**
-   * Retrieves a payment code by ID.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Retrieves a webhook by ID.
+   * @param id - The webhook ID (must start with "whk-")
    * @param config - Per-request configuration overrides
-   * @returns The payment code
+   * @returns The webhook
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(
-    id: string,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  async get(id: string, config?: RequestConfig): Promise<ApiResponse<Webhook>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validateWebhookId(id);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Webhook>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/webhooks/${encodeURIComponent(id)}`,
       config,
     });
   }
 
   /**
-   * Lists payment codes with optional filtering.
-   * @param params - Optional filter and pagination parameters
+   * Lists webhooks with optional pagination.
+   * @param params - Optional pagination parameters
    * @param config - Per-request configuration overrides
-   * @returns A paginated list of payment codes
+   * @returns A paginated list of webhooks
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(
-    params?: ListPaymentCodesParams,
+    params?: ListWebhooksParams,
     config?: RequestConfig,
-  ): Promise<ApiListResponse<PaymentCode>> {
+  ): Promise<ApiListResponse<Webhook>> {
     if (this._http_client.shouldValidate && params?.limit !== undefined) {
       validateLimit(params.limit);
     }
 
     const query_params = params
       ? {
-          ussd_code: params.ussd_code,
-          mode: params.mode,
-          status: params.status,
           limit: params.limit,
           after: params.after,
         }
       : undefined;
 
-    return this._http_client.request<ApiListResponse<PaymentCode>>({
+    return this._http_client.request<ApiListResponse<Webhook>>({
       method: "GET",
-      path: `/${API_VERSION}/payment-codes`,
+      path: `/${API_VERSION}/webhooks`,
       params: query_params,
       config,
     });
   }
 
   /**
-   * Updates a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Updates a webhook.
+   * @param id - The webhook ID (must start with "whk-")
    * @param input - Fields to update (null values will clear the field)
    * @param config - Per-request configuration overrides
-   * @returns The updated payment code
+   * @returns The updated webhook
    * @throws {MonimeValidationError} If validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
   async update(
     id: string,
-    input: UpdatePaymentCodeInput,
+    input: UpdateWebhookInput,
     config?: RequestConfig,
-  ): Promise<ApiResponse<PaymentCode>> {
+  ): Promise<ApiResponse<Webhook>> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
-      validateUpdatePaymentCodeInput(input);
+      validateWebhookId(id);
+      validateUpdateWebhookInput(input);
     }
 
-    return this._http_client.request<ApiResponse<PaymentCode>>({
+    return this._http_client.request<ApiResponse<Webhook>>({
       method: "PATCH",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/webhooks/${encodeURIComponent(id)}`,
       body: input,
       config,
     });
   }
 
   /**
-   * Deletes a payment code.
-   * @param id - The payment code ID (must start with "pmc-")
+   * Deletes a webhook.
+   * @param id - The webhook ID (must start with "whk-")
    * @param config - Per-request configuration overrides
    * @returns Confirmation of deletion
    * @throws {MonimeValidationError} If ID validation fails
@@ -148,12 +142,12 @@ export class PaymentCodeModule {
    */
   async delete(id: string, config?: RequestConfig): Promise<ApiDeleteResponse> {
     if (this._http_client.shouldValidate) {
-      validatePaymentCodeId(id);
+      validateWebhookId(id);
     }
 
     return this._http_client.request<ApiDeleteResponse>({
       method: "DELETE",
-      path: `/${API_VERSION}/payment-codes/${encodeURIComponent(id)}`,
+      path: `/${API_VERSION}/webhooks/${encodeURIComponent(id)}`,
       config,
     });
   }
