@@ -22,10 +22,6 @@
     "README.md",
     "LICENSE"
   ],
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
   "scripts": {
     "format": "biome check --write .",
     "format:check": "biome check .",
