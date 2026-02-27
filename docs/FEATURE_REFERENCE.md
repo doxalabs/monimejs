@@ -29,7 +29,7 @@ MonimeClient
 
 ---
 
-## 1. HTTP Client (`src/http-client.ts`)
+## 1. HTTP Client (`src/http-client.js`)
 
 ### Request Flow
 
@@ -100,7 +100,7 @@ Prevents crashes when server returns HTML error pages (proxies, CDNs).
 
 ---
 
-## 2. Validation (`src/validation.ts` + `src/schemas.ts`)
+## 2. Validation (`src/validation.js` + `src/schemas.js`)
 
 ### Schema Library
 
@@ -146,7 +146,7 @@ if (options.baseUrl !== undefined && !options.baseUrl.startsWith("https://")) {
 
 ---
 
-## 3. Error Classes (`src/errors.ts`)
+## 3. Error Classes (`src/errors.js`)
 
 ### Hierarchy
 
@@ -185,7 +185,7 @@ get isRetryable() {
 
 ---
 
-## 4. Module Pattern (`src/*-module.ts`)
+## 4. Module Pattern (`src/*-module.js`)
 
 Each module follows the same pattern:
 
@@ -233,7 +233,7 @@ if (method === "POST") {
 }
 ```
 
-**Note:** Idempotency keys are auto-generated internally in `http-client.ts` and passed via `RequestConfig.idempotencyKey` from modules.
+**Note:** Idempotency keys are auto-generated internally in `http-client.js` and passed via `RequestConfig.idempotencyKey` from modules.
 
 ---
 
@@ -341,18 +341,18 @@ All modules follow the standard pattern and support CRUD operations where applic
 
 | Module | File | Purpose | Operations |
 |--------|------|---------|------------|
-| `bank` | `src/bank.ts` | Retrieve bank provider information | `list(params)`, `get(providerId)` |
-| `financialAccount` | `src/financial-account.ts` | Manage digital wallets/accounts | `create`, `get`, `list`, `update`, `getBalance` |
-| `financialTransaction` | `src/financial-transaction.ts` | View immutable transaction ledger | `get`, `list` (read-only) |
-| `paymentCode` | `src/payment-code.ts` | Create USSD payment links | `create`, `get`, `list`, `update`, `delete` |
-| `payment` | `src/payment.ts` | View payments created by payment codes | `get`, `list`, `update` (read-mostly) |
-| `checkoutSession` | `src/checkout-session.ts` | Hosted payment page sessions | `create`, `get`, `list` |
-| `payout` | `src/payout.ts` | Disburse funds to external accounts | `create`, `get`, `list`, `update`, `delete` |
-| `webhook` | `src/webhook.ts` | Event notification subscriptions | `create`, `get`, `list`, `update`, `delete` |
-| `internalTransfer` | `src/internal-transfer.ts` | Transfer between financial accounts | `create`, `get`, `list`, `update` |
-| `momo` | `src/momo.ts` | Retrieve mobile money provider info | `list(params)`, `get(providerId)` |
-| `receipt` | `src/receipt.ts` | Manage digital receipts with entitlements | `get`, `redeem` |
-| `ussdOtp` | `src/ussd-otp.ts` | USSD-based phone verification | `create`, `get`, `list` |
+| `bank` | `src/bank.js` | Retrieve bank provider information | `list(params)`, `get(providerId)` |
+| `financialAccount` | `src/financial-account.js` | Manage digital wallets/accounts | `create`, `get`, `list`, `update`, `getBalance` |
+| `financialTransaction` | `src/financial-transaction.js` | View immutable transaction ledger | `get`, `list` (read-only) |
+| `paymentCode` | `src/payment-code.js` | Create USSD payment links | `create`, `get`, `list`, `update`, `delete` |
+| `payment` | `src/payment.js` | View payments created by payment codes | `get`, `list`, `update` (read-mostly) |
+| `checkoutSession` | `src/checkout-session.js` | Hosted payment page sessions | `create`, `get`, `list` |
+| `payout` | `src/payout.js` | Disburse funds to external accounts | `create`, `get`, `list`, `update`, `delete` |
+| `webhook` | `src/webhook.js` | Event notification subscriptions | `create`, `get`, `list`, `update`, `delete` |
+| `internalTransfer` | `src/internal-transfer.js` | Transfer between financial accounts | `create`, `get`, `list`, `update` |
+| `momo` | `src/momo.js` | Retrieve mobile money provider info | `list(params)`, `get(providerId)` |
+| `receipt` | `src/receipt.js` | Manage digital receipts with entitlements | `get`, `redeem` |
+| `ussdOtp` | `src/ussd-otp.js` | USSD-based phone verification | `create`, `get`, `list` |
 
 ### Module Constructor Pattern
 

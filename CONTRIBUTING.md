@@ -74,7 +74,8 @@ npm run build:types
 
 ### TypeScript & Strict Mode
 
-- All main source code must be **TypeScript** with strict type checking enabled
+- All main source code is **JavaScript with JSDoc** for type safety
+- Type checking is done via `tsc --noEmit` in CI
 - use snake_case for internal code (any code that the consumer does not use)
 - Use explicit types; avoid `any`
 - Follow the `tsconfig.json` configuration
@@ -91,12 +92,12 @@ npm run format
 ### Code Style Guidelines
 
 1. **File Structure**:
-   - Core client logic: `client.ts`
-   - HTTP handling: `http-client.ts`
-   - Type definitions: `types.ts`
-   - Input schemas/validation: `schemas.ts`, `validation.ts`
-   - Error classes: `errors.ts`
-   - Feature modules: `payment.ts`, `payout.ts`, etc.
+   - Core client logic: `client.js`
+   - HTTP handling: `http-client.js`
+   - Type definitions: `index.js` (with JSDoc)
+   - Input schemas/validation: `schemas.js`, `validation.js`
+   - Error classes: `errors.js`
+   - Feature modules: `payment.js`, `payout.js`, etc.
 
 2. **Naming Conventions**:
    - Classes: `PascalCase` (e.g., `MonimeClient`)
@@ -105,14 +106,14 @@ npm run format
    - Types/Interfaces: `PascalCase` (e.g., `PaymentResponse`)
 
 3. **Error Handling**:
-   - Throw typed error classes from `errors.ts`
+   - Throw typed error classes from `errors.js`
    - Use specific error types: `MonimeApiError`, `MonimeValidationError`, `MonimeTimeoutError`, `MonimeNetworkError`
    - Include descriptive messages and context
 
 4. **Validation**:
    - Use Valibot schemas for input validation
-   - Schemas defined in `schemas.ts`
-   - Validation functions in `validation.ts`
+   - Schemas defined in `schemas.js`
+   - Validation functions in `validation.js`
 
 5. **Documentation**:
    - Add JSDoc comments to public methods

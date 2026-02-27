@@ -39,4 +39,3 @@ MONIME_ACCESS_TOKEN=your-access-token
 | [receipt.md](./receipt.md) | Retrieve and redeem customer entitlements |
 | [ussd-otp.md](./ussd-otp.md) | Phone verification via USSD |
 | [error-handling.md](./error-handling.md) | Handle SDK errors |
-| [request-config.md](./request-config.md) | Timeouts, retries, abort signals |

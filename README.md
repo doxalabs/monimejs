@@ -131,7 +131,8 @@ The SDK includes the following additional modules:
 - **`client.momo`** - List and query mobile money providers (`list`, `get`)
 - **`client.ussdOtp`** - Create USSD-based phone verification sessions (`create`, `get`, `list`)
 
-For complete type definitions and API details, see [docs/examples](./docs/examples/README.md).
+For complete API details and usage examples, see [docs/examples](./docs/examples/README.md).
+For type definitions, the package exports JSDoc comments and TypeScript declarations in `dist/index.d.ts`.
 
 ---
 
