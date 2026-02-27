@@ -197,18 +197,23 @@ Use conventional commit format when possible.
 
 ## Release Process
 
-### Automated via GitHub Actions
+### GitHub Workflow + npm OIDC
 
-Once your PR is merged to `main`:
+Releases publish automatically from GitHub Actions when a version tag is pushed.
 
-1. The release workflow triggers automatically
-2. A "Release PR" is created with:
-   - Updated version in `package.json`
-   - Generated changelog based on changesets
-3. When the Release PR is merged:
-   - Package is built
-   - Published to npm with provenance signature
-   - GitHub release is created with changelog
+1. Bump the package version:
+   - `npm version <patch|minor|major>`
+2. Push commit and tag:
+   - `git push && git push --tags`
+3. GitHub Actions `Release` workflow runs and:
+   - validates formatting
+   - builds the package
+   - publishes to npm with `--provenance` using OIDC Trusted Publishing
+   - creates a GitHub Release
+
+One-time npm setup:
+- In npm package settings, enable Trusted Publishing for this GitHub repository/workflow.
+- No `NPM_TOKEN` secret is required for the publish step.
 
 ### Version Numbers
 

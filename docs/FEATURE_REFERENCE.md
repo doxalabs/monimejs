@@ -357,9 +357,8 @@ Modules are instantiated once in `MonimeClient` constructor and reused for the c
 **Dev dependencies:**
 - `esbuild` - Fast bundler for production build
 - `typescript` - TypeScript compiler
-- `dts-bundle-generator` - Bundles .d.ts files
+- `cp` in build script - Copies `src/index.d.ts` to `dist/index.d.ts`
 - `@biomejs/biome` - Code linting/formatting
-- `@changesets/cli` - Changelog and version management
 - `@types/node` - Node.js type definitions
 
 ---
