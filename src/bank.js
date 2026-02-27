@@ -1,17 +1,15 @@
-import type { MonimeHttpClient } from "./http-client";
-import type {
-  ApiListResponse,
-  ApiResponse,
-  Bank,
-  ListBanksParams,
-  RequestConfig,
-} from "./types";
 import {
   BankProviderIdSchema,
   CountryCodeSchema,
   LimitSchema,
   validate,
-} from "./validation";
+} from "./validation.js";
+
+/** @typedef {import("./http-client.js").MonimeHttpClient} MonimeHttpClient */
+/** @typedef {import("./index.d.ts").ApiListResponse<import("./index.d.ts").Bank>} BankListResponse */
+/** @typedef {import("./index.d.ts").ApiResponse<import("./index.d.ts").Bank>} BankResponse */
+/** @typedef {import("./index.d.ts").ListBanksParams} ListBanksParams */
+/** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
 /**
  * Module for retrieving bank provider information.
@@ -36,66 +34,58 @@ import {
  *
  * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/bank/object} Banks API Documentation
  */
-export class BankModule {
-  private http_client: MonimeHttpClient;
+class BankModule {
+  /** @type {MonimeHttpClient} */
+  http_client;
 
-  constructor(http_client: MonimeHttpClient) {
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
-
   /**
    * Lists banks available in a specified country.
-   * @param params - Filter and pagination parameters
-   * @param config - Optional request configuration
-   * @returns A paginated list of banks
+   * @param {ListBanksParams} params - Filter and pagination parameters
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<BankListResponse>} A paginated list of banks
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async list(
-    params: ListBanksParams,
-    config?: RequestConfig,
-  ): Promise<ApiListResponse<Bank>> {
+  async list(params, config) {
     if (this.http_client.should_validate) {
       validate(CountryCodeSchema, params.country);
-      if (params.limit !== undefined) {
+      if (params.limit !== void 0) {
         validate(LimitSchema, params.limit);
       }
     }
-
     const query_params = {
       country: params.country,
       limit: params.limit,
       after: params.after,
     };
-
-    return this.http_client.request<ApiListResponse<Bank>>({
+    return this.http_client.request({
       method: "GET",
       path: "/banks",
       params: query_params,
       config,
     });
   }
-
   /**
    * Retrieves a bank by its provider ID.
-   * @param providerId - The bank provider ID
-   * @param config - Optional request configuration
-   * @returns The bank
+   * @param {string} providerId - The bank provider ID
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<BankResponse>} The bank
    * @throws {MonimeValidationError} If providerId validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(
-    providerId: string,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<Bank>> {
+  async get(providerId, config) {
     if (this.http_client.should_validate) {
       validate(BankProviderIdSchema, providerId);
     }
-
-    return this.http_client.request<ApiResponse<Bank>>({
+    return this.http_client.request({
       method: "GET",
       path: `/banks/${encodeURIComponent(providerId)}`,
       config,
     });
   }
 }
+export { BankModule };

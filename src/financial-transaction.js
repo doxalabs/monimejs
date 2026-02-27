@@ -1,12 +1,10 @@
-import type { MonimeHttpClient } from "./http-client";
-import type {
-  ApiListResponse,
-  ApiResponse,
-  FinancialTransaction,
-  ListFinancialTransactionsParams,
-  RequestConfig,
-} from "./types";
-import { IdSchema, LimitSchema, validate } from "./validation";
+import { IdSchema, LimitSchema, validate } from "./validation.js";
+
+/** @typedef {import("./http-client.js").MonimeHttpClient} MonimeHttpClient */
+/** @typedef {import("./index.d.ts").ApiListResponse<import("./index.d.ts").FinancialTransaction>} FinancialTransactionListResponse */
+/** @typedef {import("./index.d.ts").ApiResponse<import("./index.d.ts").FinancialTransaction>} FinancialTransactionResponse */
+/** @typedef {import("./index.d.ts").ListFinancialTransactionsParams} ListFinancialTransactionsParams */
+/** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
 /**
  * Module for viewing financial transactions.
@@ -35,52 +33,44 @@ import { IdSchema, LimitSchema, validate } from "./validation";
  *
  * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/financial-transaction/object} Financial Transactions API Documentation
  */
-export class FinancialTransactionModule {
-  private http_client: MonimeHttpClient;
+class FinancialTransactionModule {
+  /** @type {MonimeHttpClient} */
+  http_client;
 
-  constructor(http_client: MonimeHttpClient) {
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
-
   /**
    * Retrieves a financial transaction by ID.
-   * @param id - The financial transaction ID
-   * @param config - Optional request configuration
-   * @returns The financial transaction
+   * @param {string} id - The financial transaction ID
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<FinancialTransactionResponse>} The financial transaction
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(
-    id: string,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<FinancialTransaction>> {
+  async get(id, config) {
     if (this.http_client.should_validate) {
       validate(IdSchema, id);
     }
-
-    return this.http_client.request<ApiResponse<FinancialTransaction>>({
+    return this.http_client.request({
       method: "GET",
       path: `/financial-transactions/${encodeURIComponent(id)}`,
       config,
     });
   }
-
   /**
    * Lists financial transactions with optional filtering.
-   * @param params - Optional filter and pagination parameters
-   * @param config - Optional request configuration
-   * @returns A paginated list of financial transactions
+   * @param {ListFinancialTransactionsParams} [params] - Optional filter and pagination parameters
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<FinancialTransactionListResponse>} A paginated list of financial transactions
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async list(
-    params?: ListFinancialTransactionsParams,
-    config?: RequestConfig,
-  ): Promise<ApiListResponse<FinancialTransaction>> {
-    if (this.http_client.should_validate && params?.limit !== undefined) {
+  async list(params, config) {
+    if (this.http_client.should_validate && params?.limit !== void 0) {
       validate(LimitSchema, params.limit);
     }
-
     const query_params = params
       ? {
           financialAccountId: params.financialAccountId,
@@ -89,9 +79,8 @@ export class FinancialTransactionModule {
           limit: params.limit,
           after: params.after,
         }
-      : undefined;
-
-    return this.http_client.request<ApiListResponse<FinancialTransaction>>({
+      : void 0;
+    return this.http_client.request({
       method: "GET",
       path: "/financial-transactions",
       params: query_params,
@@ -99,3 +88,4 @@ export class FinancialTransactionModule {
     });
   }
 }
+export { FinancialTransactionModule };

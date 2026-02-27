@@ -45,7 +45,7 @@ request() → build_url() → build_headers() → execute_with_retry() → execu
 
 Uses manual `AbortController` + `setTimeout` (not `AbortSignal.timeout()` for cleanup control):
 
-```typescript
+```javascript
 const timeout_controller = new AbortController();
 const timeout_id = setTimeout(() => timeout_controller.abort(), timeout);
 
@@ -62,7 +62,7 @@ try {
 
 Combines user signal + timeout signal using `AbortSignal.any()` (Node 20+):
 
-```typescript
+```javascript
 const signals = [timeout_controller.signal];
 if (external_signal) signals.push(external_signal);
 const combined = AbortSignal.any(signals);
@@ -79,7 +79,7 @@ After abort, we check which signal fired to throw the right error:
 - HTTP 429, 500, 502, 503, 504
 
 **Backoff formula:**
-```typescript
+```javascript
 delay = retryDelay * (retryBackoff ^ attempt) + random(0-500ms)
 ```
 
@@ -87,8 +87,8 @@ delay = retryDelay * (retryBackoff ^ attempt) + random(0-500ms)
 
 ### JSON Parsing Safety
 
-```typescript
-let data: unknown;
+```javascript
+let data;
 try {
   data = await res.json();
 } catch {
@@ -132,7 +132,7 @@ Each resource type has a required prefix:
 
 ### HTTPS Enforcement
 
-```typescript
+```javascript
 if (options.baseUrl !== undefined && !options.baseUrl.startsWith("https://")) {
   throw new MonimeValidationError("baseUrl must use HTTPS for security", [
     {
@@ -162,8 +162,8 @@ MonimeError (base)
 
 All error classes include prototype chain fix for proper `instanceof` checks:
 
-```typescript
-constructor(message: string) {
+```javascript
+constructor(message) {
   super(message);
   Object.setPrototypeOf(this, new.target.prototype);
 }
@@ -171,14 +171,14 @@ constructor(message: string) {
 
 ### Retryable Detection
 
-```typescript
+```javascript
 // MonimeApiError
-get isRetryable(): boolean {
+get isRetryable() {
   return [429, 500, 502, 503, 504].includes(this.code);
 }
 
 // MonimeNetworkError
-get isRetryable(): boolean {
+get isRetryable() {
   return true; // Network errors are always retryable
 }
 ```
@@ -189,15 +189,22 @@ get isRetryable(): boolean {
 
 Each module follows the same pattern:
 
-```typescript
+```javascript
 export class XxxModule {
-  private http_client: MonimeHttpClient;
+  /** @type {MonimeHttpClient} */
+  http_client;
 
-  constructor(http_client: MonimeHttpClient) {
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
 
-  async create(input, config?) {
+  /**
+   * @param {CreateXxxInput} input
+   * @param {RequestConfig} [config]
+   * @returns {Promise<XxxResponse>}
+   */
+  async create(input, config) {
     if (this.http_client.should_validate) {
       validate(CreateXxxInputSchema, input);
     }
@@ -209,10 +216,10 @@ export class XxxModule {
     });
   }
 
-  async get(id, config?) { /* validate ID, GET request */ }
-  async list(params?, config?) { /* validate limit, GET with query params */ }
-  async update(id, input, config?) { /* validate ID + input, PATCH request */ }
-  async delete(id, config?) { /* validate ID, DELETE request */ }
+  async get(id, config) { /* validate ID, GET request */ }
+  async list(params, config) { /* validate limit, GET with query params */ }
+  async update(id, input, config) { /* validate ID + input, PATCH request */ }
+  async delete(id, config) { /* validate ID, DELETE request */ }
 }
 ```
 
@@ -220,7 +227,7 @@ export class XxxModule {
 
 Auto-generated for POST requests using `crypto.randomUUID()`:
 
-```typescript
+```javascript
 if (method === "POST") {
   headers["Idempotency-Key"] = idempotency_key ?? crypto.randomUUID();
 }
@@ -234,32 +241,53 @@ if (method === "POST") {
 
 ### Response Wrappers
 
-```typescript
-type ApiResponse<T> = { success: boolean; messages: string[]; result: T };
-type ApiListResponse<T> = { success: boolean; messages: string[]; result: T[]; pagination: PaginationInfo };
-type ApiDeleteResponse = { success: boolean; messages: string[] };
+```javascript
+/**
+ * @template T
+ * @typedef {object} ApiResponse
+ * @property {boolean} success
+ * @property {string[]} messages
+ * @property {T} result
+ */
+
+/**
+ * @template T
+ * @typedef {object} ApiListResponse
+ * @property {boolean} success
+ * @property {string[]} messages
+ * @property {T[]} result
+ * @property {PaginationInfo} pagination
+ */
+
+/**
+ * @typedef {object} ApiDeleteResponse
+ * @property {boolean} success
+ * @property {string[]} messages
+ */
 ```
 
 ### Client Configuration
 
-```typescript
-type ClientOptions = {
-  spaceId: string;           // Required, must start with "spc-"
-  accessToken: string;       // Required
-  baseUrl?: string;          // Default: "https://api.monime.io"
-  timeout?: number;          // Default: 30000ms
-  retries?: number;          // Default: 2
-  retryDelay?: number;       // Default: 1000ms
-  retryBackoff?: number;     // Default: 2
-  validateInputs?: boolean;  // Default: true
-};
+```javascript
+/**
+ * @typedef {object} ClientOptions
+ * @property {string} spaceId - Required, must start with "spc-"
+ * @property {string} accessToken - Required
+ * @property {string} [baseUrl] - Default: "https://api.monime.io"
+ * @property {number} [timeout] - Default: 30000ms
+ * @property {number} [retries] - Default: 2
+ * @property {number} [retryDelay] - Default: 1000ms
+ * @property {number} [retryBackoff] - Default: 2
+ * @property {boolean} [validateInputs] - Default: true
+ */
 
-type RequestConfig = {
-  timeout?: number;
-  retries?: number;
-  signal?: AbortSignal;
-  idempotencyKey?: string;
-};
+/**
+ * @typedef {object} RequestConfig
+ * @property {number} [timeout]
+ * @property {number} [retries]
+ * @property {AbortSignal} [signal]
+ * @property {string} [idempotencyKey]
+ */
 ```
 
 ---
@@ -282,7 +310,7 @@ esbuild src/index.ts \
 - **ESM only** - No CommonJS build
 - **Node 20+** - Required for `AbortSignal.any()`
 - **External valibot** - Not bundled, listed as dependency
-- **Minified** - ~20KB output
+- **Minified** - 20.1KB output
 
 ### TypeScript Declaration Generation
 
@@ -330,11 +358,13 @@ All modules follow the standard pattern and support CRUD operations where applic
 
 All modules receive the HTTP client singleton in their constructor:
 
-```typescript
-export class XxxModule {
-  private http_client: MonimeHttpClient;
-  
-  constructor(http_client: MonimeHttpClient) {
+```javascript
+class XxxModule {
+  /** @type {MonimeHttpClient} */
+  http_client;
+
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
 }
@@ -351,19 +381,12 @@ Modules are instantiated once in `MonimeClient` constructor and reused for the c
 | `valibot` | Schema validation | ~10KB |
 
 **Build Output:**
-- `dist/index.js` - Minified bundle | ~20KB
+- `dist/index.js` - Minified bundle | 20.1KB
 - `dist/index.d.ts` - Type declarations | Bundled single file
 
 **Dev dependencies:**
 - `esbuild` - Fast bundler for production build
 - `typescript` - TypeScript compiler
-- `dts-bundle-generator` - Bundles .d.ts files
+- `cp` in build script - Copies `src/index.d.ts` to `dist/index.d.ts`
 - `@biomejs/biome` - Code linting/formatting
-- `@changesets/cli` - Changelog and version management
 - `@types/node` - Node.js type definitions
-
----
-
-## Testing Strategy
-
-See [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) for comprehensive testing guidelines and examples.

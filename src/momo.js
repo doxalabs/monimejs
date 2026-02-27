@@ -1,17 +1,15 @@
-import type { MonimeHttpClient } from "./http-client";
-import type {
-  ApiListResponse,
-  ApiResponse,
-  ListMomosParams,
-  Momo,
-  RequestConfig,
-} from "./types";
 import {
   CountryCodeSchema,
   LimitSchema,
   MomoProviderIdSchema,
   validate,
-} from "./validation";
+} from "./validation.js";
+
+/** @typedef {import("./http-client.js").MonimeHttpClient} MonimeHttpClient */
+/** @typedef {import("./index.d.ts").ApiListResponse<import("./index.d.ts").Momo>} MomoListResponse */
+/** @typedef {import("./index.d.ts").ApiResponse<import("./index.d.ts").Momo>} MomoResponse */
+/** @typedef {import("./index.d.ts").ListMomosParams} ListMomosParams */
+/** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
 /**
  * Module for retrieving mobile money provider information.
@@ -42,66 +40,58 @@ import {
  *
  * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/momo/object} Mobile Money Providers API Documentation
  */
-export class MomoModule {
-  private http_client: MonimeHttpClient;
+class MomoModule {
+  /** @type {MonimeHttpClient} */
+  http_client;
 
-  constructor(http_client: MonimeHttpClient) {
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
-
   /**
    * Lists mobile money providers available in a specified country.
-   * @param params - Filter and pagination parameters
-   * @param config - Optional request configuration
-   * @returns A paginated list of mobile money providers
+   * @param {ListMomosParams} params - Filter and pagination parameters
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<MomoListResponse>} A paginated list of mobile money providers
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async list(
-    params: ListMomosParams,
-    config?: RequestConfig,
-  ): Promise<ApiListResponse<Momo>> {
+  async list(params, config) {
     if (this.http_client.should_validate) {
       validate(CountryCodeSchema, params.country);
-      if (params.limit !== undefined) {
+      if (params.limit !== void 0) {
         validate(LimitSchema, params.limit);
       }
     }
-
     const query_params = {
       country: params.country,
       limit: params.limit,
       after: params.after,
     };
-
-    return this.http_client.request<ApiListResponse<Momo>>({
+    return this.http_client.request({
       method: "GET",
       path: "/momos",
       params: query_params,
       config,
     });
   }
-
   /**
    * Retrieves a mobile money provider by its provider ID.
-   * @param providerId - The mobile money provider ID
-   * @param config - Optional request configuration
-   * @returns The mobile money provider
+   * @param {string} providerId - The mobile money provider ID
+   * @param {RequestConfig} [config] - Optional request configuration
+   * @returns {Promise<MomoResponse>} The mobile money provider
    * @throws {MonimeValidationError} If providerId validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(
-    providerId: string,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<Momo>> {
+  async get(providerId, config) {
     if (this.http_client.should_validate) {
       validate(MomoProviderIdSchema, providerId);
     }
-
-    return this.http_client.request<ApiResponse<Momo>>({
+    return this.http_client.request({
       method: "GET",
       path: `/momos/${encodeURIComponent(providerId)}`,
       config,
     });
   }
 }
+export { MomoModule };

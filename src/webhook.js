@@ -1,21 +1,19 @@
-import type { MonimeHttpClient } from "./http-client";
-import type {
-  ApiDeleteResponse,
-  ApiListResponse,
-  ApiResponse,
-  CreateWebhookInput,
-  ListWebhooksParams,
-  RequestConfig,
-  UpdateWebhookInput,
-  Webhook,
-} from "./types";
 import {
   CreateWebhookInputSchema,
   IdSchema,
   LimitSchema,
   UpdateWebhookInputSchema,
   validate,
-} from "./validation";
+} from "./validation.js";
+
+/** @typedef {import("./http-client.js").MonimeHttpClient} MonimeHttpClient */
+/** @typedef {import("./index.d.ts").ApiDeleteResponse} ApiDeleteResponse */
+/** @typedef {import("./index.d.ts").ApiListResponse<import("./index.d.ts").Webhook>} WebhookListResponse */
+/** @typedef {import("./index.d.ts").ApiResponse<import("./index.d.ts").Webhook>} WebhookResponse */
+/** @typedef {import("./index.d.ts").CreateWebhookInput} CreateWebhookInput */
+/** @typedef {import("./index.d.ts").ListWebhooksParams} ListWebhooksParams */
+/** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
+/** @typedef {import("./index.d.ts").UpdateWebhookInput} UpdateWebhookInput */
 
 /**
  * Module for managing webhooks.
@@ -38,132 +36,114 @@ import {
  *
  * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/webhook/object} Webhooks API Documentation
  */
-export class WebhookModule {
-  private http_client: MonimeHttpClient;
+class WebhookModule {
+  /** @type {MonimeHttpClient} */
+  http_client;
 
-  constructor(http_client: MonimeHttpClient) {
+  /** @param {MonimeHttpClient} http_client */
+  constructor(http_client) {
     this.http_client = http_client;
   }
-
   /**
    * Creates a new webhook.
-   * @param input - Webhook configuration including URL and events
-   * @param config - Optional request configuration (timeout, idempotencyKey, signal)
-   * @returns The created webhook
+   * @param {CreateWebhookInput} input - Webhook configuration including URL and events
+   * @param {RequestConfig} [config] - Optional request configuration (timeout, idempotencyKey, signal)
+   * @returns {Promise<WebhookResponse>} The created webhook
    * @throws {MonimeValidationError} If input validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async create(
-    input: CreateWebhookInput,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<Webhook>> {
+  async create(input, config) {
     if (this.http_client.should_validate) {
       validate(CreateWebhookInputSchema, input);
     }
-
-    return this.http_client.request<ApiResponse<Webhook>>({
+    return this.http_client.request({
       method: "POST",
       path: "/webhooks",
       body: input,
       config,
     });
   }
-
   /**
    * Retrieves a webhook by ID.
-   * @param id - The webhook ID (must start with "whk-")
-   * @param config - Optional request configuration (timeout, idempotencyKey, signal)
-   * @returns The webhook
+   * @param {string} id - The webhook ID (must start with "whk-")
+   * @param {RequestConfig} [config] - Optional request configuration (timeout, idempotencyKey, signal)
+   * @returns {Promise<WebhookResponse>} The webhook
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async get(id: string, config?: RequestConfig): Promise<ApiResponse<Webhook>> {
+  async get(id, config) {
     if (this.http_client.should_validate) {
       validate(IdSchema, id);
     }
-
-    return this.http_client.request<ApiResponse<Webhook>>({
+    return this.http_client.request({
       method: "GET",
       path: `/webhooks/${encodeURIComponent(id)}`,
       config,
     });
   }
-
   /**
    * Lists webhooks with optional pagination.
-   * @param params - Optional pagination parameters
-   * @param config - Optional request configuration (timeout, idempotencyKey, signal)
-   * @returns A paginated list of webhooks
+   * @param {ListWebhooksParams} [params] - Optional pagination parameters
+   * @param {RequestConfig} [config] - Optional request configuration (timeout, idempotencyKey, signal)
+   * @returns {Promise<WebhookListResponse>} A paginated list of webhooks
    * @throws {MonimeValidationError} If params validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async list(
-    params?: ListWebhooksParams,
-    config?: RequestConfig,
-  ): Promise<ApiListResponse<Webhook>> {
-    if (this.http_client.should_validate && params?.limit !== undefined) {
+  async list(params, config) {
+    if (this.http_client.should_validate && params?.limit !== void 0) {
       validate(LimitSchema, params.limit);
     }
-
     const query_params = params
       ? {
           limit: params.limit,
           after: params.after,
         }
-      : undefined;
-
-    return this.http_client.request<ApiListResponse<Webhook>>({
+      : void 0;
+    return this.http_client.request({
       method: "GET",
       path: "/webhooks",
       params: query_params,
       config,
     });
   }
-
   /**
    * Updates a webhook.
-   * @param id - The webhook ID (must start with "whk-")
-   * @param input - Fields to update
-   * @param config - Optional request configuration (timeout, idempotencyKey, signal)
-   * @returns The updated webhook
+   * @param {string} id - The webhook ID (must start with "whk-")
+   * @param {UpdateWebhookInput} input - Fields to update
+   * @param {RequestConfig} [config] - Optional request configuration (timeout, idempotencyKey, signal)
+   * @returns {Promise<WebhookResponse>} The updated webhook
    * @throws {MonimeValidationError} If validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async update(
-    id: string,
-    input: UpdateWebhookInput,
-    config?: RequestConfig,
-  ): Promise<ApiResponse<Webhook>> {
+  async update(id, input, config) {
     if (this.http_client.should_validate) {
       validate(IdSchema, id);
       validate(UpdateWebhookInputSchema, input);
     }
-
-    return this.http_client.request<ApiResponse<Webhook>>({
+    return this.http_client.request({
       method: "PATCH",
       path: `/webhooks/${encodeURIComponent(id)}`,
       body: input,
       config,
     });
   }
-
   /**
    * Deletes a webhook.
-   * @param id - The webhook ID (must start with "whk-")
-   * @param config - Optional request configuration (timeout, idempotencyKey, signal)
-   * @returns Confirmation of deletion
+   * @param {string} id - The webhook ID (must start with "whk-")
+   * @param {RequestConfig} [config] - Optional request configuration (timeout, idempotencyKey, signal)
+   * @returns {Promise<ApiDeleteResponse>} Confirmation of deletion
    * @throws {MonimeValidationError} If ID validation fails
    * @throws {MonimeApiError} If the API returns an error
    */
-  async delete(id: string, config?: RequestConfig): Promise<ApiDeleteResponse> {
+  async delete(id, config) {
     if (this.http_client.should_validate) {
       validate(IdSchema, id);
     }
-
-    return this.http_client.request<ApiDeleteResponse>({
+    return this.http_client.request({
       method: "DELETE",
       path: `/webhooks/${encodeURIComponent(id)}`,
       config,
     });
   }
 }
+export { WebhookModule };

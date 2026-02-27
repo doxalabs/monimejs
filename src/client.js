@@ -1,17 +1,18 @@
-import { BankModule } from "./bank";
-import { CheckoutSessionModule } from "./checkout-session";
-import { FinancialAccountModule } from "./financial-account";
-import { FinancialTransactionModule } from "./financial-transaction";
-import { MonimeHttpClient } from "./http-client";
-import { InternalTransferModule } from "./internal-transfer";
-import { MomoModule } from "./momo";
-import { PaymentModule } from "./payment";
-import { PaymentCodeModule } from "./payment-code";
-import { PayoutModule } from "./payout";
-import { ReceiptModule } from "./receipt";
-import type { ClientOptions } from "./types";
-import { UssdOtpModule } from "./ussd-otp";
-import { WebhookModule } from "./webhook";
+import { BankModule } from "./bank.js";
+import { CheckoutSessionModule } from "./checkout-session.js";
+import { FinancialAccountModule } from "./financial-account.js";
+import { FinancialTransactionModule } from "./financial-transaction.js";
+import { MonimeHttpClient } from "./http-client.js";
+import { InternalTransferModule } from "./internal-transfer.js";
+import { MomoModule } from "./momo.js";
+import { PaymentModule } from "./payment.js";
+import { PaymentCodeModule } from "./payment-code.js";
+import { PayoutModule } from "./payout.js";
+import { ReceiptModule } from "./receipt.js";
+import { UssdOtpModule } from "./ussd-otp.js";
+import { WebhookModule } from "./webhook.js";
+
+/** @typedef {import("./index.d.ts").ClientOptions} ClientOptions */
 
 /**
  * The main Monime SDK client.
@@ -20,12 +21,12 @@ import { WebhookModule } from "./webhook";
  * All API modules are accessible as properties of this client.
  *
  * @example
- * ```typescript
+ * ```javascript
  * import { MonimeClient } from "monimejs";
  *
  * const client = new MonimeClient({
- *   spaceId: process.env.MONIME_SPACE_ID!,
- *   accessToken: process.env.MONIME_ACCESS_TOKEN!,
+ *   spaceId: process.env.MONIME_SPACE_ID,
+ *   accessToken: process.env.MONIME_ACCESS_TOKEN,
  * });
  *
  * // Create a payment code
@@ -35,62 +36,63 @@ import { WebhookModule } from "./webhook";
  * });
  * ```
  */
-export class MonimeClient {
-  private http_client: MonimeHttpClient;
-
+class MonimeClient {
+  /** @type {MonimeHttpClient} */
+  http_client;
   /** Module for retrieving bank information (financial institution providers) */
-  bank: BankModule;
-
+  /** @type {BankModule} */
+  bank;
   /** Module for managing financial accounts (wallets that hold and track money) */
-  financialAccount: FinancialAccountModule;
-
+  /** @type {FinancialAccountModule} */
+  financialAccount;
   /** Module for managing financial transactions (fund movements affecting accounts) */
-  financialTransaction: FinancialTransactionModule;
-
+  /** @type {FinancialTransactionModule} */
+  financialTransaction;
   /** Module for managing payment codes (USSD payment links) */
-  paymentCode: PaymentCodeModule;
-
+  /** @type {PaymentCodeModule} */
+  paymentCode;
   /** Module for managing payments (read-only, created via payment codes) */
-  payment: PaymentModule;
-
+  /** @type {PaymentModule} */
+  payment;
   /** Module for managing checkout sessions (hosted payment pages) */
-  checkoutSession: CheckoutSessionModule;
-
+  /** @type {CheckoutSessionModule} */
+  checkoutSession;
   /** Module for managing payouts (disbursements to external accounts) */
-  payout: PayoutModule;
-
+  /** @type {PayoutModule} */
+  payout;
   /** Module for managing webhooks (event notifications) */
-  webhook: WebhookModule;
-
+  /** @type {WebhookModule} */
+  webhook;
   /** Module for managing internal transfers (between financial accounts) */
-  internalTransfer: InternalTransferModule;
-
+  /** @type {InternalTransferModule} */
+  internalTransfer;
   /** Module for retrieving mobile money provider information */
-  momo: MomoModule;
-
+  /** @type {MomoModule} */
+  momo;
   /** Module for managing receipts (proof of customer entitlements) */
-  receipt: ReceiptModule;
-
+  /** @type {ReceiptModule} */
+  receipt;
   /** Module for managing USSD OTP verification */
-  ussdOtp: UssdOtpModule;
-
+  /** @type {UssdOtpModule} */
+  ussdOtp;
   /**
    * Creates a new Monime client instance.
    *
-   * @param options - Client configuration options
-   * @param options.spaceId - Your Monime space ID (must start with "spc-")
-   * @param options.accessToken - Your Monime API access token
-   * @param options.baseUrl - Optional custom API base URL (must use HTTPS)
-   * @param options.timeout - Request timeout in milliseconds (default: 30000)
-   * @param options.retries - Number of retry attempts (default: 2)
-   * @param options.retryDelay - Initial retry delay in milliseconds (default: 1000)
-   * @param options.retryBackoff - Retry backoff multiplier (default: 2)
-   * @param options.validateInputs - Whether to validate inputs before requests (default: true)
+   * @param {ClientOptions} options - Client configuration options
+   * @param {object} options - Options object
+   * @param {string} options.spaceId - Your Monime space ID (must start with "spc-")
+   * @param {string} options.accessToken - Your Monime API access token
+   * @param {string} [options.baseUrl] - Optional custom API base URL (must use HTTPS)
+   * @param {number} [options.timeout] - Request timeout in milliseconds (default: 30000)
+   * @param {number} [options.retries] - Number of retry attempts (default: 2)
+   * @param {number} [options.retryDelay] - Initial retry delay in milliseconds (default: 1000)
+   * @param {number} [options.retryBackoff] - Retry backoff multiplier (default: 2)
+   * @param {boolean} [options.validateInputs] - Whether to validate inputs before requests (default: true)
    *
    * @throws {MonimeValidationError} If options validation fails
    *
    * @example
-   * ```typescript
+   * ```javascript
    * // Basic usage
    * const client = new MonimeClient({
    *   spaceId: "spc-your-space-id",
@@ -106,9 +108,8 @@ export class MonimeClient {
    * });
    * ```
    */
-  constructor(options: ClientOptions) {
+  constructor(options) {
     this.http_client = new MonimeHttpClient(options);
-
     this.bank = new BankModule(this.http_client);
     this.financialAccount = new FinancialAccountModule(this.http_client);
     this.financialTransaction = new FinancialTransactionModule(
@@ -125,3 +126,4 @@ export class MonimeClient {
     this.ussdOtp = new UssdOtpModule(this.http_client);
   }
 }
+export { MonimeClient };

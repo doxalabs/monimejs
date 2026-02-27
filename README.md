@@ -78,12 +78,12 @@ You can also pass credentials directly when creating the client.
 
 ### Create a client
 
-```ts
+```javascript
 import { MonimeClient } from "monimejs";
 
 const client = new MonimeClient({
-  spaceId: process.env.MONIME_SPACE_ID!,
-  accessToken: process.env.MONIME_ACCESS_TOKEN!,
+  spaceId: process.env.MONIME_SPACE_ID,
+  accessToken: process.env.MONIME_ACCESS_TOKEN,
 });
 ```
 
@@ -94,7 +94,7 @@ Now all methods use the client's credentials automatically.
 
 ### Payment Codes
 
-```ts
+```javascript
 // Create a payment code
 const { result: paymentCode } = await client.paymentCode.create({
   name: "Order #1234",
@@ -139,7 +139,7 @@ For complete type definitions and API details, see [docs/examples](./docs/exampl
 
 The SDK provides typed error classes for different failure scenarios:
 
-```ts
+```javascript
 import {
   MonimeClient,
   MonimeApiError,
@@ -178,10 +178,10 @@ try {
 
 ### Configuration
 
-```ts
+```javascript
 const client = new MonimeClient({
-  spaceId: process.env.MONIME_SPACE_ID!,
-  accessToken: process.env.MONIME_ACCESS_TOKEN!,
+  spaceId: process.env.MONIME_SPACE_ID,
+  accessToken: process.env.MONIME_ACCESS_TOKEN,
   timeout: 30000,      // 30 seconds (default)
   retries: 2,          // Retry up to 2 times (default)
   retryDelay: 1000,    // Start with 1s delay (default)
@@ -191,7 +191,7 @@ const client = new MonimeClient({
 
 ### Per-Request Overrides
 
-```ts
+```javascript
 // Longer timeout for slow operations
 const { result, pagination } = await client.paymentCode.list({
   status: "pending",
@@ -219,7 +219,7 @@ For more details, see [docs/FEATURE_REFERENCE.md](./docs/FEATURE_REFERENCE.md).
 
 Cancel requests using the standard `AbortController` API:
 
-```ts
+```javascript
 const controller = new AbortController();
 
 // Start request
@@ -248,7 +248,7 @@ For POST endpoints, the SDK automatically adds an `Idempotency-Key` header. This
 
 You can provide a custom idempotency key:
 
-```ts
+```javascript
 await client.paymentCode.create(input, {
   idempotencyKey: "my-custom-key",
 });
