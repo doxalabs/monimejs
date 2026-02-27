@@ -27,7 +27,7 @@
     "format:check": "biome check .",
     "build": "npm run build:js && npm run build:types",
     "build:js": "esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js --target=node20 --minify --tree-shaking=true --external:valibot",
-    "build:types": "dts-bundle-generator -o dist/index.d.ts src/index.ts --no-banner",
+    "build:types": "cp src/index.d.ts dist/index.d.ts",
     "build:clean": "rm -rf dist && npm run build",
     "prepublishOnly": "npm run build:clean",
     "changeset": "changeset",
@@ -36,7 +36,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atisans/monimejs.git"
+    "url": "git+https://github.com/doxalabs/monimejs.git"
   },
   "keywords": [
     "mobile money",
@@ -45,7 +45,6 @@
     "afri money",
     "monimejs"
   ],
-  "author": "The Artisans",
   "license": "Apache-2.0",
   "contributors": [
     {
@@ -62,15 +61,14 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/atisans/monimejs/issues"
+    "url": "https://github.com/doxalabs/monimejs/issues"
   },
-  "homepage": "https://github.com/atisans/monimejs#readme",
+  "homepage": "https://github.com/doxalabs/monimejs#readme",
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
     "@types/node": "^25.3.1",
-    "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.27.3",
     "typescript": "^5.9.3"
   },
