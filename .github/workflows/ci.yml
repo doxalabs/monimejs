@@ -7,13 +7,10 @@ on:
   pull_request:
     branches:
       - main
-<<<<<<< HEAD
-=======
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
->>>>>>> goodbye-ts
 
 jobs:
   build:
