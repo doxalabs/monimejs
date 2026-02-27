@@ -5,6 +5,13 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+<<<<<<< HEAD
+=======
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+>>>>>>> goodbye-ts
 
 jobs:
   publish:
