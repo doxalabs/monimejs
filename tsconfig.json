@@ -21,8 +21,11 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.js", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

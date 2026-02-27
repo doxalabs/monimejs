@@ -10,6 +10,3 @@ export {
   MonimeValidationError,
   type ValidationIssue,
 } from "./errors";
-
-// Types
-export * from "./types";
