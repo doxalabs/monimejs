@@ -11,6 +11,35 @@ import {
 /** @typedef {import("./index.d.ts").ListMomosParams} ListMomosParams */
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
+/**
+ * Module for retrieving mobile money provider information.
+ *
+ * Provides read-only access to the directory of supported mobile money (MoMo)
+ * providers across different countries. Use this module to discover available
+ * mobile money networks, populate provider selection interfaces, or validate
+ * provider IDs before creating payment or payout transactions.
+ *
+ * Common providers include:
+ * - QCell (m13)
+ * - Africell (m17)
+ * - Orange Money (m18)
+ *
+ * Provider information includes:
+ * - Unique provider ID and display name
+ * - Country of operation
+ * - Supported capabilities (payouts, payments, KYC verification)
+ * - Current operational status
+ * - Network metadata
+ *
+ * Use cases:
+ * - Build mobile money provider selection dropdowns
+ * - Validate provider IDs before payment or payout requests
+ * - Display available MoMo networks by country
+ * - Filter providers by supported features
+ * - Check operational status before transactions
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/momo/object} Mobile Money Providers API Documentation
+ */
 class MomoModule {
   /** @type {MonimeHttpClient} */
   http_client;

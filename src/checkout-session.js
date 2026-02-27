@@ -13,6 +13,23 @@ import {
 /** @typedef {import("./index.d.ts").ListCheckoutSessionsParams} ListCheckoutSessionsParams */
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
+/**
+ * Module for managing checkout sessions.
+ *
+ * Checkout sessions provide hosted payment pages for e-commerce integrations.
+ * Create a session with line items and redirect customers to a Monime-hosted
+ * checkout page that handles the entire payment flow.
+ *
+ * Features:
+ * - Hosted payment pages with customizable branding
+ * - Support for multiple line items (products, fees, discounts)
+ * - Automatic receipt generation
+ * - Success and cancel URL redirects
+ * - Session expiration controls
+ * - Payment method selection (mobile money, bank transfer)
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/checkout-session/object} Checkout Sessions API Documentation
+ */
 class CheckoutSessionModule {
   /** @type {MonimeHttpClient} */
   http_client;

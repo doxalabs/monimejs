@@ -15,6 +15,28 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdateInternalTransferInput} UpdateInternalTransferInput */
 
+/**
+ * Module for managing internal transfers.
+ *
+ * Internal transfers move funds between financial accounts within the same
+ * Monime workspace. Unlike payouts (which send funds externally), internal
+ * transfers are instant, free, and ideal for fund management operations.
+ *
+ * Use cases:
+ * - Move funds from collection accounts to disbursement accounts
+ * - Split revenue between multiple business units
+ * - Reserve funds for specific purposes or escrow
+ * - Consolidate balances across accounts
+ *
+ * Features:
+ * - Instant settlement between accounts
+ * - No transaction fees
+ * - Same-currency transfers only
+ * - Automatic balance updates
+ * - Full audit trail via financial transactions
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/internal-transfer/object} Internal Transfers API Documentation
+ */
 class InternalTransferModule {
   /** @type {MonimeHttpClient} */
   http_client;

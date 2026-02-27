@@ -15,6 +15,22 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdatePaymentCodeInput} UpdatePaymentCodeInput */
 
+/**
+ * Module for managing payment codes.
+ *
+ * Payment codes are programmable, short-lived tokens that generate USSD dial strings
+ * for receiving mobile money payments. They support one-time payments (single use)
+ * and recurrent payments (multiple uses until a target is met).
+ *
+ * Features:
+ * - Generate USSD codes like *715*12345#
+ * - Restrict to specific mobile money providers (Orange, Africell, QCell)
+ * - Restrict to a single authorized phone number
+ * - Set expiration duration
+ * - Track payment completion status
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/payment-code/object} Payment Codes API Documentation
+ */
 class PaymentCodeModule {
   /** @type {MonimeHttpClient} */
   http_client;

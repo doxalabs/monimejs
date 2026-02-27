@@ -6,6 +6,33 @@ import { IdSchema, LimitSchema, validate } from "./validation.js";
 /** @typedef {import("./index.d.ts").ListFinancialTransactionsParams} ListFinancialTransactionsParams */
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
+/**
+ * Module for viewing financial transactions.
+ *
+ * Financial transactions are immutable ledger entries that record every fund movement
+ * across your financial accounts. This module provides read-only access to the complete
+ * transaction history for accounting, reconciliation, and audit purposes.
+ *
+ * Transaction types:
+ * - "credit": Money incoming (payments, refunds, transfers in)
+ * - "debit": Money outgoing (payouts, fees, transfers out)
+ *
+ * Each transaction includes:
+ * - Precise amount and timestamp
+ * - Account balance after the transaction
+ * - Reference to the source operation (payment, payout, transfer, etc.)
+ * - Unique transaction reference for reconciliation
+ * - Metadata for custom tracking
+ *
+ * Use cases:
+ * - Generate account statements
+ * - Reconcile with external accounting systems
+ * - Track fund flows across accounts
+ * - Audit financial operations
+ * - Build reporting dashboards
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/financial-transaction/object} Financial Transactions API Documentation
+ */
 class FinancialTransactionModule {
   /** @type {MonimeHttpClient} */
   http_client;

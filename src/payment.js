@@ -12,6 +12,23 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdatePaymentInput} UpdatePaymentInput */
 
+/**
+ * Module for managing payments.
+ *
+ * Payments represent completed payment transactions from customers. This module
+ * provides read-only access to view and query payment records. Payments are
+ * automatically created when customers complete transactions via payment codes,
+ * checkout sessions, or other payment channels.
+ *
+ * Features:
+ * - View payment details and status
+ * - Track payment sources (payment code, checkout session)
+ * - Filter by order number or financial account
+ * - Access transaction references for accounting
+ * - Update metadata for record keeping
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/payment/object} Payments API Documentation
+ */
 class PaymentModule {
   /** @type {MonimeHttpClient} */
   http_client;

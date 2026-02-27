@@ -13,6 +13,28 @@ import {
 /** @typedef {import("./index.d.ts").ListUssdOtpsParams} ListUssdOtpsParams */
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
+/**
+ * Module for USSD OTP verification.
+ *
+ * USSD OTP provides passwordless phone number verification through USSD dial codes.
+ * Instead of SMS codes, users dial a unique USSD string to prove phone ownership.
+ * This method works on all mobile phones including feature phones without internet.
+ *
+ * Verification flow:
+ * 1. Create an OTP session with the phone number to verify
+ * 2. Display the generated USSD code to the user
+ * 3. User dials the USSD code (e.g., *715*12345#) from their phone
+ * 4. Poll the session status until verified
+ *
+ * Benefits:
+ * - Works without internet connectivity
+ * - No SMS delivery delays or costs
+ * - Supports all mobile networks
+ * - Instant verification feedback
+ * - Secure proof of phone ownership
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/ussd-otp/object} USSD OTP API Documentation
+ */
 class UssdOtpModule {
   /** @type {MonimeHttpClient} */
   http_client;

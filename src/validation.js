@@ -27,8 +27,15 @@ import {
 /** @typedef {import("./errors.js").ValidationIssue} ValidationIssue */
 
 /**
- * @param {v.BaseIssue<unknown>[]} issues
- * @returns {MonimeValidationError}
+ * Converts valibot validation issues to a MonimeValidationError.
+ *
+ * Transforms valibot's raw issue format into a structured ValidationIssue array
+ * and creates a MonimeValidationError with appropriate error messaging. Handles
+ * nested field paths by joining path segments with dots (e.g., "customer.name").
+ *
+ * @internal
+ * @param {v.BaseIssue<unknown>[]} issues - Array of valibot validation issues from failed parse operations
+ * @returns {MonimeValidationError} A MonimeValidationError with formatted validation issues
  */
 function to_validation_error(issues) {
   if (issues.length === 0) {
@@ -49,11 +56,23 @@ function to_validation_error(issues) {
       : `Validation failed with ${validation_issues.length} errors`;
   return new MonimeValidationError(String(message), validation_issues);
 }
+
 /**
- * @template T
- * @param {v.BaseSchema<unknown, T, v.BaseIssue<unknown>>} schema
- * @param {unknown} data
- * @returns {void}
+ * Validates data against a valibot schema and throws on validation failure.
+ *
+ * A generic validation function that accepts any valibot schema and input data,
+ * parses it against the schema, and throws a MonimeValidationError if validation
+ * fails. This is the single entry point for all input validation in the SDK.
+ *
+ * The function performs type-safe validation using valibot's schema definitions
+ * while maintaining detailed error information about what failed and why. All
+ * validation errors are caught and transformed into structured MonimeValidationError
+ * instances with field paths, messages, and problematic values.
+ *
+ * @template T - The expected type of valid data (inferred from schema)
+ * @param {v.BaseSchema<unknown, T, v.BaseIssue<unknown>>} schema - A valibot schema to validate against
+ * @param {unknown} data - Unknown input data to validate
+ * @throws {MonimeValidationError} If validation fails with details about validation issues
  */
 function validate(schema, data) {
   const result = v.safeParse(schema, data);

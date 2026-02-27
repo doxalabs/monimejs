@@ -15,6 +15,27 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdateWebhookInput} UpdateWebhookInput */
 
+/**
+ * Module for managing webhooks.
+ *
+ * Webhooks enable real-time HTTP notifications when events occur in your Monime
+ * account. Configure endpoints to receive instant updates about payments, payouts,
+ * and other transactions, eliminating the need for polling.
+ *
+ * Supported events:
+ * - payment.created, payment.completed
+ * - payout.created, payout.completed, payout.failed
+ * - checkout_session.completed
+ * - internal_transfer.completed
+ *
+ * Security features:
+ * - Request signatures for verification (HS256 HMAC or ES256 ECDSA)
+ * - Automatic retry with exponential backoff
+ * - Configurable timeout settings
+ * - Enable/disable endpoints without deletion
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/webhook/object} Webhooks API Documentation
+ */
 class WebhookModule {
   /** @type {MonimeHttpClient} */
   http_client;

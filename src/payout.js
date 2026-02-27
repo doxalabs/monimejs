@@ -15,6 +15,23 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdatePayoutInput} UpdatePayoutInput */
 
+/**
+ * Module for managing payouts.
+ *
+ * Payouts enable disbursements from your financial accounts to external recipients
+ * via bank transfers, mobile money, or wallet transfers. Use payouts for vendor
+ * payments, refunds, salary disbursements, and other outbound transfers.
+ *
+ * Features:
+ * - Send funds to bank accounts (local and international)
+ * - Disburse to mobile money wallets (Orange, Africell, QCell)
+ * - Transfer to other Monime wallet addresses
+ * - Track payout status (pending, completed, failed)
+ * - Batch processing support
+ * - Transaction reference tracking
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/payout/object} Payouts API Documentation
+ */
 class PayoutModule {
   /** @type {MonimeHttpClient} */
   http_client;

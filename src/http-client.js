@@ -26,11 +26,23 @@ import { ClientOptionsSchema, validate } from "./validation.js";
  */
 
 const API_VERSION = "v1";
+
+/** API version prefix for all endpoints */
+/** @type {number} */
 const DEFAULT_TIMEOUT = 3e4;
+/** @type {number} */
 const DEFAULT_RETRIES = 2;
+/** @type {number} */
 const DEFAULT_RETRY_DELAY = 1e3;
+/** @type {number} */
 const DEFAULT_RETRY_BACKOFF = 2;
+/** @type {string} */
 const DEFAULT_BASE_URL = "https://api.monime.io";
+
+/**
+ * Internal HTTP client for making requests to the Monime API.
+ * Handles authentication, retries, timeouts, and error handling.
+ */
 class MonimeHttpClient {
   /** @type {string} */
   base_url;

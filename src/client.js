@@ -14,6 +14,28 @@ import { WebhookModule } from "./webhook.js";
 
 /** @typedef {import("./index.d.ts").ClientOptions} ClientOptions */
 
+/**
+ * The main Monime SDK client.
+ *
+ * Creates a client instance with the provided credentials and configuration.
+ * All API modules are accessible as properties of this client.
+ *
+ * @example
+ * ```javascript
+ * import { MonimeClient } from "monimejs";
+ *
+ * const client = new MonimeClient({
+ *   spaceId: process.env.MONIME_SPACE_ID,
+ *   accessToken: process.env.MONIME_ACCESS_TOKEN,
+ * });
+ *
+ * // Create a payment code
+ * const { result } = await client.paymentCode.create({
+ *   name: "Order #1234",
+ *   amount: { currency: "SLE", value: 1000 },
+ * });
+ * ```
+ */
 class MonimeClient {
   /** @type {MonimeHttpClient} */
   http_client;
@@ -57,11 +79,20 @@ class MonimeClient {
    * Creates a new Monime client instance.
    *
    * @param {ClientOptions} options - Client configuration options
+   * @param {object} options - Options object
+   * @param {string} options.spaceId - Your Monime space ID (must start with "spc-")
+   * @param {string} options.accessToken - Your Monime API access token
+   * @param {string} [options.baseUrl] - Optional custom API base URL (must use HTTPS)
+   * @param {number} [options.timeout] - Request timeout in milliseconds (default: 30000)
+   * @param {number} [options.retries] - Number of retry attempts (default: 2)
+   * @param {number} [options.retryDelay] - Initial retry delay in milliseconds (default: 1000)
+   * @param {number} [options.retryBackoff] - Retry backoff multiplier (default: 2)
+   * @param {boolean} [options.validateInputs] - Whether to validate inputs before requests (default: true)
    *
    * @throws {MonimeValidationError} If options validation fails
    *
    * @example
-   * ```typescript
+   * ```javascript
    * // Basic usage
    * const client = new MonimeClient({
    *   spaceId: "spc-your-space-id",

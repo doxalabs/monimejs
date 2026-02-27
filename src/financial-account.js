@@ -15,6 +15,29 @@ import {
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 /** @typedef {import("./index.d.ts").UpdateFinancialAccountInput} UpdateFinancialAccountInput */
 
+/**
+ * Module for managing financial accounts.
+ *
+ * Financial accounts are digital wallets that hold and track funds in your Monime
+ * workspace. Each account maintains its own balance, transaction history, and
+ * unique identifiers for receiving funds.
+ *
+ * Account features:
+ * - Single currency per account (SLE or USD)
+ * - UVAN (Universal Virtual Account Number) for receiving transfers
+ * - Real-time balance tracking
+ * - Complete transaction ledger
+ * - Customizable reference IDs and metadata
+ *
+ * Use cases:
+ * - Separate accounts for different business units or departments
+ * - Collection accounts dedicated to receiving customer payments
+ * - Disbursement accounts for managing payouts
+ * - Escrow or reserve accounts for holding funds
+ * - Multi-tenant systems with account-per-customer architecture
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/financial-account/object} Financial Accounts API Documentation
+ */
 class FinancialAccountModule {
   /** @type {MonimeHttpClient} */
   http_client;

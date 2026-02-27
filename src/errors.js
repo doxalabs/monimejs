@@ -1,10 +1,14 @@
 /**
  * @typedef {object} ValidationIssue
- * @property {string} message
- * @property {string} field
- * @property {unknown} [value]
+ * @property {string} message - Human-readable error message
+ * @property {string} field - Path to the field that failed validation (e.g., "amount.value", "lineItems.0.name")
+ * @property {unknown} [value] - The invalid value that was provided
  */
 
+/**
+ * Base error class for all Monime SDK errors.
+ * All SDK-specific errors extend this class for consistent error handling.
+ */
 class MonimeError extends Error {
   /** @param {string} message */
   constructor(message) {
@@ -13,6 +17,12 @@ class MonimeError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+/**
+ * Error thrown when the API returns an error response (4xx, 5xx).
+ * Contains detailed information about the API error including status code,
+ * reason, and any additional details from the response.
+ */
 class MonimeApiError extends MonimeError {
   /** @type {number} */
   code;
@@ -58,6 +68,11 @@ class MonimeApiError extends MonimeError {
     );
   }
 }
+
+/**
+ * Error thrown when a request times out.
+ * Contains the timeout value and the URL that timed out.
+ */
 class MonimeTimeoutError extends MonimeError {
   /** @type {number} */
   timeout;
@@ -76,6 +91,11 @@ class MonimeTimeoutError extends MonimeError {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+/**
+ * Error thrown when input validation fails.
+ * Contains all validation issues found, allowing users to fix multiple errors at once.
+ */
 class MonimeValidationError extends MonimeError {
   /** @type {ValidationIssue[]} */
   issues;
@@ -91,6 +111,11 @@ class MonimeValidationError extends MonimeError {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+/**
+ * Error thrown when a network error occurs (connection refused, DNS failure, etc.).
+ * These errors are generally retryable as they may be transient.
+ */
 class MonimeNetworkError extends MonimeError {
   /** @type {Error | undefined} */
   cause;

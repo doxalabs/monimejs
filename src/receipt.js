@@ -10,6 +10,33 @@ import {
 /** @typedef {import("./index.d.ts").RedeemReceiptInput} RedeemReceiptInput */
 /** @typedef {import("./index.d.ts").RequestConfig} RequestConfig */
 
+/**
+ * Module for managing receipts and entitlements.
+ *
+ * Receipts provide digital proof of purchase with redeemable entitlements attached.
+ * Each entitlement represents a claimable resource like event tickets, credits,
+ * access passes, or vouchers. Receipts are automatically generated from successful
+ * checkout sessions and can be redeemed incrementally.
+ *
+ * Entitlement types:
+ * - Event tickets with QR codes
+ * - Service credits or points
+ * - Access rights or memberships
+ * - Vouchers or gift cards
+ *
+ * Redemption states:
+ * - "not_redeemed": No entitlements have been claimed
+ * - "partially_redeemed": Some entitlements used, some remaining
+ * - "fully_redeemed": All entitlements exhausted
+ *
+ * Use cases:
+ * - Event ticketing with check-in tracking
+ * - Loyalty points and rewards systems
+ * - Gift card management
+ * - Access control for digital or physical resources
+ *
+ * @see {@link https://docs.monime.io/apis/versions/caph-2025-08-23/receipt/object} Receipts API Documentation
+ */
 class ReceiptModule {
   /** @type {MonimeHttpClient} */
   http_client;
