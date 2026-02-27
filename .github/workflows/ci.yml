@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
   build:
@@ -29,6 +27,9 @@ jobs:
 
       - name: Check formatting
         run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Build
         run: npm run build:clean
