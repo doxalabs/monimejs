@@ -6,6 +6,10 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
 
@@ -41,7 +45,7 @@ jobs:
         run: npm run build:clean
 
       - name: Publish package (OIDC Trusted Publishing)
-        run: npm publish --provenance --access public
+        run: npm run release
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
