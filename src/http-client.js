@@ -45,21 +45,21 @@ const DEFAULT_BASE_URL = "https://api.monime.io";
  */
 class MonimeHttpClient {
   /** @type {string} */
-  base_url;
+  #base_url;
   /** @type {string} */
-  space_id;
+  #space_id;
   /** @type {string} */
-  access_token;
+  #access_token;
   /** @type {number} */
-  timeout;
+  #timeout;
   /** @type {number} */
-  retries;
+  #retries;
   /** @type {number} */
-  retry_delay;
+  #retry_delay;
   /** @type {number} */
-  retry_backoff;
+  #retry_backoff;
   /** @type {boolean} */
-  validate_inputs;
+  #validate_inputs;
 
   /** @param {ClientOptions} options */
   constructor(options) {
@@ -75,21 +75,21 @@ class MonimeHttpClient {
     if (options.validateInputs !== false) {
       validate(ClientOptionsSchema, options);
     }
-    this.base_url = options.baseUrl ?? DEFAULT_BASE_URL;
-    this.space_id = options.spaceId;
-    this.access_token = options.accessToken;
-    this.timeout = options.timeout ?? DEFAULT_TIMEOUT;
-    this.retries = options.retries ?? DEFAULT_RETRIES;
-    this.retry_delay = options.retryDelay ?? DEFAULT_RETRY_DELAY;
-    this.retry_backoff = options.retryBackoff ?? DEFAULT_RETRY_BACKOFF;
-    this.validate_inputs = options.validateInputs ?? true;
+    this.#base_url = options.baseUrl ?? DEFAULT_BASE_URL;
+    this.#space_id = options.spaceId;
+    this.#access_token = options.accessToken;
+    this.#timeout = options.timeout ?? DEFAULT_TIMEOUT;
+    this.#retries = options.retries ?? DEFAULT_RETRIES;
+    this.#retry_delay = options.retryDelay ?? DEFAULT_RETRY_DELAY;
+    this.#retry_backoff = options.retryBackoff ?? DEFAULT_RETRY_BACKOFF;
+    this.#validate_inputs = options.validateInputs ?? true;
   }
   /**
    * Whether input validation is enabled
    * @returns {boolean}
    */
   get should_validate() {
-    return this.validate_inputs;
+    return this.#validate_inputs;
   }
 
   /**
@@ -104,12 +104,12 @@ class MonimeHttpClient {
    */
   async request(options) {
     const { method, path, body, params, config } = options;
-    const timeout = config?.timeout ?? this.timeout;
-    const max_retries = config?.retries ?? this.retries;
+    const timeout = config?.timeout ?? this.#timeout;
+    const max_retries = config?.retries ?? this.#retries;
     const external_signal = config?.signal;
     const idempotency_key = config?.idempotencyKey;
-    const url = this.build_url(path, params);
-    const headers = this.build_headers(method, body, idempotency_key);
+    const url = this.#build_url(path, params);
+    const headers = this.#build_headers(method, body, idempotency_key);
     /** @type {RequestInit} */
     const fetch_options = {
       method,
@@ -118,7 +118,7 @@ class MonimeHttpClient {
     if (body !== undefined) {
       fetch_options.body = JSON.stringify(body);
     }
-    return this.execute_with_retry(
+    return this.#execute_with_retry(
       url,
       fetch_options,
       timeout,
@@ -132,8 +132,8 @@ class MonimeHttpClient {
    * @param {Record<string, string | number | boolean | undefined>} [params]
    * @returns {string}
    */
-  build_url(path, params) {
-    let url = `${this.base_url}/${API_VERSION}${path}`;
+  #build_url(path, params) {
+    let url = `${this.#base_url}/${API_VERSION}${path}`;
     if (params) {
       const search_params = new URLSearchParams();
       for (const [key, value] of Object.entries(params)) {
@@ -155,11 +155,11 @@ class MonimeHttpClient {
    * @param {string} [idempotency_key]
    * @returns {Record<string, string>}
    */
-  build_headers(method, body, idempotency_key) {
+  #build_headers(method, body, idempotency_key) {
     /** @type {Record<string, string>} */
     const headers = {
-      "Monime-Space-Id": this.space_id,
-      Authorization: `Bearer ${this.access_token}`,
+      "Monime-Space-Id": this.#space_id,
+      Authorization: `Bearer ${this.#access_token}`,
     };
     if (body !== undefined) {
       headers["Content-Type"] = "application/json";
@@ -179,7 +179,7 @@ class MonimeHttpClient {
    * @param {AbortSignal} [external_signal]
    * @returns {Promise<T>}
    */
-  async execute_with_retry(
+  async #execute_with_retry(
     url,
     fetch_options,
     timeout,
@@ -194,7 +194,7 @@ class MonimeHttpClient {
       attempt_number++
     ) {
       try {
-        return await this.execute_request(
+        return await this.#execute_request(
           url,
           fetch_options,
           timeout,
@@ -208,14 +208,14 @@ class MonimeHttpClient {
         if (last_error instanceof MonimeTimeoutError) {
           throw last_error;
         }
-        const is_retryable = this.is_retryable_error(last_error);
+        const is_retryable = this.#is_retryable_error(last_error);
         const is_last_attempt = attempt_number === total_attempts;
         if (!is_retryable || is_last_attempt) {
           throw last_error;
         }
         const retry_index = attempt_number - 1;
-        const delay = this.calculate_retry_delay(retry_index, last_error);
-        await this.sleep(delay);
+        const delay = this.#calculate_retry_delay(retry_index, last_error);
+        await this.#sleep(delay);
       }
     }
     throw last_error ?? new Error("Unknown error during retry");
@@ -229,7 +229,7 @@ class MonimeHttpClient {
    * @param {AbortSignal} [external_signal]
    * @returns {Promise<T>}
    */
-  async execute_request(url, fetch_options, timeout, external_signal) {
+  async #execute_request(url, fetch_options, timeout, external_signal) {
     /** @type {AbortSignal[]} */
     const signals = [];
     let timeout_id;
@@ -263,7 +263,7 @@ class MonimeHttpClient {
         );
       }
       if (!res.ok) {
-        const retry_after = this.parse_retry_after(res.headers);
+        const retry_after = this.#parse_retry_after(res.headers);
         const error_response = /** @type {ApiErrorResponse} */ (data);
         if (error_response.error) {
           throw new MonimeApiError(
@@ -313,7 +313,7 @@ class MonimeHttpClient {
    * @param {Headers} headers
    * @returns {number | undefined}
    */
-  parse_retry_after(headers) {
+  #parse_retry_after(headers) {
     const retry_after = headers.get("Retry-After");
     if (!retry_after) return undefined;
     const seconds = Number.parseInt(retry_after, 10);
@@ -331,7 +331,7 @@ class MonimeHttpClient {
    * @param {Error} error
    * @returns {boolean}
    */
-  is_retryable_error(error) {
+  #is_retryable_error(error) {
     if (error instanceof MonimeNetworkError) {
       return true;
     }
@@ -348,11 +348,11 @@ class MonimeHttpClient {
    * @param {Error} error
    * @returns {number}
    */
-  calculate_retry_delay(retry_index, error) {
+  #calculate_retry_delay(retry_index, error) {
     if (error instanceof MonimeApiError && error.retryAfter !== undefined) {
       return error.retryAfter;
     }
-    const base_delay = this.retry_delay * this.retry_backoff ** retry_index;
+    const base_delay = this.#retry_delay * this.#retry_backoff ** retry_index;
     const jitter = Math.random() * 500;
     return base_delay + jitter;
   }
@@ -360,7 +360,7 @@ class MonimeHttpClient {
    * @param {number} ms
    * @returns {Promise<void>}
    */
-  sleep(ms) {
+  #sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

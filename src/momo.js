@@ -42,11 +42,11 @@ import {
  */
 class MomoModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Lists mobile money providers available in a specified country.
@@ -57,7 +57,7 @@ class MomoModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(CountryCodeSchema, params.country);
       if (params.limit !== undefined) {
         validate(LimitSchema, params.limit);
@@ -68,7 +68,7 @@ class MomoModule {
       limit: params.limit,
       after: params.after,
     };
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: "/momos",
       params: query_params,
@@ -84,10 +84,10 @@ class MomoModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(providerId, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(MomoProviderIdSchema, providerId);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/momos/${encodeURIComponent(providerId)}`,
       config,

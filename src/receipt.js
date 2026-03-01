@@ -39,11 +39,11 @@ import {
  */
 class ReceiptModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Retrieves a receipt by order number.
@@ -54,10 +54,10 @@ class ReceiptModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(orderNumber, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(ReceiptOrderNumberSchema, orderNumber);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/receipts/${encodeURIComponent(orderNumber)}`,
       config,
@@ -73,11 +73,11 @@ class ReceiptModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async redeem(orderNumber, input, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(ReceiptOrderNumberSchema, orderNumber);
       validate(RedeemReceiptInputSchema, input);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "POST",
       path: `/receipts/${encodeURIComponent(orderNumber)}/redeem`,
       body: input,

@@ -38,7 +38,7 @@ import { WebhookModule } from "./webhook.js";
  */
 class MonimeClient {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
   /** Module for retrieving bank information (financial institution providers) */
   /** @type {BankModule} */
   bank;
@@ -109,21 +109,21 @@ class MonimeClient {
    * ```
    */
   constructor(options) {
-    this.http_client = new MonimeHttpClient(options);
-    this.bank = new BankModule(this.http_client);
-    this.financialAccount = new FinancialAccountModule(this.http_client);
+    this.#http_client = new MonimeHttpClient(options);
+    this.bank = new BankModule(this.#http_client);
+    this.financialAccount = new FinancialAccountModule(this.#http_client);
     this.financialTransaction = new FinancialTransactionModule(
-      this.http_client,
+      this.#http_client,
     );
-    this.paymentCode = new PaymentCodeModule(this.http_client);
-    this.payment = new PaymentModule(this.http_client);
-    this.checkoutSession = new CheckoutSessionModule(this.http_client);
-    this.payout = new PayoutModule(this.http_client);
-    this.webhook = new WebhookModule(this.http_client);
-    this.internalTransfer = new InternalTransferModule(this.http_client);
-    this.momo = new MomoModule(this.http_client);
-    this.receipt = new ReceiptModule(this.http_client);
-    this.ussdOtp = new UssdOtpModule(this.http_client);
+    this.paymentCode = new PaymentCodeModule(this.#http_client);
+    this.payment = new PaymentModule(this.#http_client);
+    this.checkoutSession = new CheckoutSessionModule(this.#http_client);
+    this.payout = new PayoutModule(this.#http_client);
+    this.webhook = new WebhookModule(this.#http_client);
+    this.internalTransfer = new InternalTransferModule(this.#http_client);
+    this.momo = new MomoModule(this.#http_client);
+    this.receipt = new ReceiptModule(this.#http_client);
+    this.ussdOtp = new UssdOtpModule(this.#http_client);
   }
 }
 export { MonimeClient };

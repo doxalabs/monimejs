@@ -37,11 +37,11 @@ import {
  */
 class UssdOtpModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Creates a new USSD OTP verification request.
@@ -52,10 +52,10 @@ class UssdOtpModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async create(input, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(CreateUssdOtpInputSchema, input);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "POST",
       path: "/ussd-otps",
       body: input,
@@ -71,10 +71,10 @@ class UssdOtpModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(id, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/ussd-otps/${encodeURIComponent(id)}`,
       config,
@@ -89,7 +89,7 @@ class UssdOtpModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate && params?.limit !== undefined) {
+    if (this.#http_client.should_validate && params?.limit !== undefined) {
       validate(LimitSchema, params.limit);
     }
     const query_params = params
@@ -98,7 +98,7 @@ class UssdOtpModule {
           after: params.after,
         }
       : undefined;
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: "/ussd-otps",
       params: query_params,
@@ -114,10 +114,10 @@ class UssdOtpModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async delete(id, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "DELETE",
       path: `/ussd-otps/${encodeURIComponent(id)}`,
       config,

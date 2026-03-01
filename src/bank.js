@@ -36,11 +36,11 @@ import {
  */
 class BankModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Lists banks available in a specified country.
@@ -51,7 +51,7 @@ class BankModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(CountryCodeSchema, params.country);
       if (params.limit !== undefined) {
         validate(LimitSchema, params.limit);
@@ -62,7 +62,7 @@ class BankModule {
       limit: params.limit,
       after: params.after,
     };
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: "/banks",
       params: query_params,
@@ -78,10 +78,10 @@ class BankModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(providerId, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(BankProviderIdSchema, providerId);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/banks/${encodeURIComponent(providerId)}`,
       config,

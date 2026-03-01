@@ -39,11 +39,11 @@ import {
  */
 class InternalTransferModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Creates a new internal transfer.
@@ -54,10 +54,10 @@ class InternalTransferModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async create(input, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(CreateInternalTransferInputSchema, input);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "POST",
       path: "/internal-transfers",
       body: input,
@@ -73,10 +73,10 @@ class InternalTransferModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(id, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/internal-transfers/${encodeURIComponent(id)}`,
       config,
@@ -91,7 +91,7 @@ class InternalTransferModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate && params?.limit !== undefined) {
+    if (this.#http_client.should_validate && params?.limit !== undefined) {
       validate(LimitSchema, params.limit);
     }
     const query_params = params
@@ -104,7 +104,7 @@ class InternalTransferModule {
           after: params.after,
         }
       : undefined;
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: "/internal-transfers",
       params: query_params,
@@ -121,11 +121,11 @@ class InternalTransferModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async update(id, input, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
       validate(UpdateInternalTransferInputSchema, input);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "PATCH",
       path: `/internal-transfers/${encodeURIComponent(id)}`,
       body: input,
@@ -141,10 +141,10 @@ class InternalTransferModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async delete(id, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "DELETE",
       path: `/internal-transfers/${encodeURIComponent(id)}`,
       config,

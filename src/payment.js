@@ -31,11 +31,11 @@ import {
  */
 class PaymentModule {
   /** @type {MonimeHttpClient} */
-  http_client;
+  #http_client;
 
   /** @param {MonimeHttpClient} http_client */
   constructor(http_client) {
-    this.http_client = http_client;
+    this.#http_client = http_client;
   }
   /**
    * Retrieves a payment by ID.
@@ -46,10 +46,10 @@ class PaymentModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async get(id, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: `/payments/${encodeURIComponent(id)}`,
       config,
@@ -64,7 +64,7 @@ class PaymentModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate && params?.limit !== undefined) {
+    if (this.#http_client.should_validate && params?.limit !== undefined) {
       validate(LimitSchema, params.limit);
     }
     const query_params = params
@@ -76,7 +76,7 @@ class PaymentModule {
           after: params.after,
         }
       : undefined;
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "GET",
       path: "/payments",
       params: query_params,
@@ -93,11 +93,11 @@ class PaymentModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async update(id, input, config) {
-    if (this.http_client.should_validate) {
+    if (this.#http_client.should_validate) {
       validate(IdSchema, id);
       validate(UpdatePaymentInputSchema, input);
     }
-    return this.http_client.request({
+    return this.#http_client.request({
       method: "PATCH",
       path: `/payments/${encodeURIComponent(id)}`,
       body: input,
