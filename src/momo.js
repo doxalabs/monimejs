@@ -59,7 +59,7 @@ class MomoModule {
   async list(params, config) {
     if (this.http_client.should_validate) {
       validate(CountryCodeSchema, params.country);
-      if (params.limit !== void 0) {
+      if (params.limit !== undefined) {
         validate(LimitSchema, params.limit);
       }
     }

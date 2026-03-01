@@ -45,7 +45,7 @@ class MonimeApiError extends MonimeError {
     this.details = details;
     this.name = "MonimeApiError";
     Object.setPrototypeOf(this, new.target.prototype);
-    if (retryAfter !== void 0) {
+    if (retryAfter !== undefined) {
       this.retryAfter = retryAfter;
     }
   }

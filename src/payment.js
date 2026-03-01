@@ -64,7 +64,7 @@ class PaymentModule {
    * @throws {MonimeApiError} If the API returns an error
    */
   async list(params, config) {
-    if (this.http_client.should_validate && params?.limit !== void 0) {
+    if (this.http_client.should_validate && params?.limit !== undefined) {
       validate(LimitSchema, params.limit);
     }
     const query_params = params
@@ -75,7 +75,7 @@ class PaymentModule {
           limit: params.limit,
           after: params.after,
         }
-      : void 0;
+      : undefined;
     return this.http_client.request({
       method: "GET",
       path: "/payments",

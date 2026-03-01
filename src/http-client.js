@@ -63,7 +63,7 @@ class MonimeHttpClient {
 
   /** @param {ClientOptions} options */
   constructor(options) {
-    if (options.baseUrl !== void 0 && !options.baseUrl.startsWith("https://")) {
+    if (options.baseUrl !== undefined && !options.baseUrl.startsWith("https://")) {
       throw new MonimeValidationError("baseUrl must use HTTPS for security", [
         {
           message: "baseUrl must use HTTPS for security",
@@ -115,7 +115,7 @@ class MonimeHttpClient {
       method,
       headers,
     };
-    if (body !== void 0) {
+    if (body !== undefined) {
       fetch_options.body = JSON.stringify(body);
     }
     return this.execute_with_retry(
@@ -137,7 +137,7 @@ class MonimeHttpClient {
     if (params) {
       const search_params = new URLSearchParams();
       for (const [key, value] of Object.entries(params)) {
-        if (value !== void 0) {
+        if (value !== undefined) {
           search_params.set(key, String(value));
         }
       }
@@ -161,7 +161,7 @@ class MonimeHttpClient {
       "Monime-Space-Id": this.space_id,
       Authorization: `Bearer ${this.access_token}`,
     };
-    if (body !== void 0) {
+    if (body !== undefined) {
       headers["Content-Type"] = "application/json";
     }
     if (method === "POST") {
@@ -245,7 +245,7 @@ class MonimeHttpClient {
     if (external_signal) {
       signals.push(external_signal);
     }
-    const signal = signals.length > 0 ? AbortSignal.any(signals) : void 0;
+    const signal = signals.length > 0 ? AbortSignal.any(signals) : undefined;
     try {
       const res = await fetch(url, {
         ...fetch_options,
@@ -302,7 +302,7 @@ class MonimeHttpClient {
       }
       throw error;
     } finally {
-      if (timeout_id !== void 0) {
+      if (timeout_id !== undefined) {
         clearTimeout(timeout_id);
       }
     }
@@ -315,7 +315,7 @@ class MonimeHttpClient {
    */
   parse_retry_after(headers) {
     const retry_after = headers.get("Retry-After");
-    if (!retry_after) return void 0;
+    if (!retry_after) return undefined;
     const seconds = Number.parseInt(retry_after, 10);
     if (!Number.isNaN(seconds)) {
       return seconds * 1e3;
@@ -323,9 +323,9 @@ class MonimeHttpClient {
     const date = Date.parse(retry_after);
     if (!Number.isNaN(date)) {
       const delay = date - Date.now();
-      return delay > 0 ? delay : void 0;
+      return delay > 0 ? delay : undefined;
     }
-    return void 0;
+    return undefined;
   }
   /**
    * @param {Error} error
@@ -349,7 +349,7 @@ class MonimeHttpClient {
    * @returns {number}
    */
   calculate_retry_delay(retry_index, error) {
-    if (error instanceof MonimeApiError && error.retryAfter !== void 0) {
+    if (error instanceof MonimeApiError && error.retryAfter !== undefined) {
       return error.retryAfter;
     }
     const base_delay = this.retry_delay * this.retry_backoff ** retry_index;
