@@ -1,16 +1,8 @@
-import { MonimeClient } from "./client.js";
-import {
+export { MonimeClient } from "./client.js";
+export {
   MonimeApiError,
   MonimeError,
   MonimeNetworkError,
   MonimeTimeoutError,
   MonimeValidationError,
 } from "./errors.js";
-export {
-  MonimeApiError,
-  MonimeClient,
-  MonimeError,
-  MonimeNetworkError,
-  MonimeTimeoutError,
-  MonimeValidationError,
-};
