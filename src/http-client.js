@@ -63,7 +63,10 @@ class MonimeHttpClient {
 
   /** @param {ClientOptions} options */
   constructor(options) {
-    if (options.baseUrl !== undefined && !options.baseUrl.startsWith("https://")) {
+    if (
+      options.baseUrl !== undefined &&
+      !options.baseUrl.startsWith("https://")
+    ) {
       throw new MonimeValidationError("baseUrl must use HTTPS for security", [
         {
           message: "baseUrl must use HTTPS for security",
