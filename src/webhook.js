@@ -51,6 +51,7 @@ class WebhookModule {
    * @returns {Promise<WebhookResponse>} The created webhook
    * @throws {MonimeValidationError} If input validation fails
    * @throws {MonimeApiError} If the API returns an error
+   * @deprecated - Create webhook from the dashboard instead. this is not guaranteed to work.
    */
   async create(input, config) {
     if (this.#http_client.should_validate) {
