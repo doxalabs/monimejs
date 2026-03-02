@@ -53,3 +53,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
+          overwrite_files: true
+          tag: ${{ github.ref_name }}
