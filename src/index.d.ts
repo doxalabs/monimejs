@@ -1487,3 +1487,45 @@ export type ListMomosParams = {
   /** Pagination cursor for next page */
   after?: string;
 };
+
+export class MonimeClient {
+  constructor(options: ClientOptions);
+  readonly bank: BankModule;
+  readonly financialAccount: FinancialAccountModule;
+  readonly financialTransaction: FinancialTransactionModule;
+  readonly paymentCode: PaymentCodeModule;
+  readonly payment: PaymentModule;
+  readonly checkoutSession: CheckoutSessionModule;
+  readonly payout: PayoutModule;
+  readonly webhook: WebhookModule;
+  readonly internalTransfer: InternalTransferModule;
+  readonly momo: MomoModule;
+  readonly receipt: ReceiptModule;
+  readonly ussdOtp: UssdOtpModule;
+}
+
+export class MonimeError extends Error {
+  constructor(message: string);
+}
+
+export class MonimeApiError extends MonimeError {
+  readonly code: number;
+  readonly reason: string;
+  readonly details: Record<string, unknown>;
+  readonly retryAfter?: number;
+  get isRetryable(): boolean;
+}
+
+export class MonimeTimeoutError extends MonimeError {
+  readonly timeout: number;
+  readonly url: string;
+}
+
+export class MonimeValidationError extends MonimeError {
+  readonly issues: unknown[];
+}
+
+export class MonimeNetworkError extends MonimeError {
+  readonly cause: Error;
+  get isRetryable(): boolean;
+}
